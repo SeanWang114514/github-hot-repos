@@ -1,0 +1,3359 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500&family=Questrial&display=swap" rel="stylesheet">
+<title>GitHub 高星新项目</title>
+<style>
+  :root {
+    --bg: #eeeeee;
+    --bg-dot: rgba(34, 40, 49, 0.09);
+    --surface: #ffffff;
+    --surface-soft: #eeeeee;
+    --ink: #222831;
+    --muted: #393e46;
+    --line: rgba(57, 62, 70, 0.22);
+    --line-strong: rgba(57, 62, 70, 0.45);
+    --accent: #00adb5;
+    --accent-soft: rgba(0, 173, 181, 0.12);
+    --accent-dark: #0a8b92;
+    --blue: #00adb5;
+    --star: #00adb5;
+    --header: #222831;
+    --header-line: #393e46;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    background-image: radial-gradient(circle at 1px 1px, var(--bg-dot) 1px, transparent 0);
+    background-size: 24px 24px;
+    color: var(--ink);
+    font-family: "Segoe UI", system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .topbar {
+    background: var(--header);
+    color: #eeeeee;
+    border-bottom: 1px solid rgba(238, 238, 238, 0.1);
+  }
+
+  .topbar-inner {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .brand svg {
+    width: 22px;
+    height: 22px;
+    color: #00adb5;
+  }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 20px;
+    padding: 0 8px;
+    border: 1px solid rgba(0, 173, 181, 0.55);
+    border-radius: 999px;
+    background: rgba(0, 173, 181, 0.15);
+    color: #7be4e9;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .live-badge::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00adb5;
+    animation: livePulse 2.4s ease-out infinite;
+  }
+
+  @keyframes livePulse {
+    0% {
+      box-shadow: 0 0 0 0 rgba(0, 173, 181, 0.55);
+    }
+    70% {
+      box-shadow: 0 0 0 6px rgba(0, 173, 181, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba(0, 173, 181, 0);
+    }
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .segment {
+    display: inline-flex;
+    gap: 2px;
+    padding: 3px;
+    background: #393e46;
+    border: 1px solid var(--header-line);
+    border-radius: 9px;
+  }
+
+  .segment button {
+    height: 32px;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: rgba(238, 238, 238, 0.66);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .segment button:hover {
+    color: #eeeeee;
+  }
+
+  .segment button.active {
+    background: #eeeeee;
+    color: #222831;
+    font-weight: 600;
+    box-shadow: 0 1px 2px rgba(34, 40, 49, 0.25);
+  }
+
+  .icon-btn {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border: 1px solid var(--header-line);
+    border-radius: 8px;
+    background: #393e46;
+    color: #eeeeee;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.12s ease;
+  }
+
+  .icon-btn:hover {
+    background: rgba(238, 238, 238, 0.14);
+  }
+
+  .icon-btn:active {
+    transform: translateY(1px);
+  }
+
+  .icon-btn:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+
+  .icon-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .spin svg {
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+  }
+
+  .summary {
+    position: sticky;
+    top: 10px;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+    padding: 10px clamp(0px, calc((100% - 960px) / 2), 56px);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(57, 62, 70, 0.14);
+    border-radius: 14px;
+    box-shadow: 0 12px 32px -20px rgba(34, 40, 49, 0.35);
+  }
+
+  .summary-head {
+    display: flex;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    background: #eeeeee;
+    border: 1px solid rgba(57, 62, 70, 0.28);
+    border-radius: 14px;
+  }
+
+  .summary-head h1::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 3px;
+    background: #00adb5;
+    vertical-align: -3px;
+  }
+
+  .summary-head > div:first-child {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  h1 {
+    margin: 0 0 4px;
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: 0;
+  }
+
+  .subtitle {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .summary-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+    padding-left: 20px;
+    border-left: 1px solid rgba(57, 62, 70, 0.25);
+  }
+
+  .stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    min-width: 104px;
+    padding: 7px 12px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(34, 40, 49, 0.06);
+  }
+
+  .stat strong {
+    display: block;
+    font-size: 18px;
+    line-height: 1.25;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+  }
+
+  .stat span {
+    font-size: 11.5px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  .summary-chips {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .model-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(0, 173, 181, 0.35);
+    border-radius: 7px;
+    color: #0d8087;
+    font-size: 12px;
+  }
+
+  .model-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00adb5;
+    box-shadow: 0 0 0 3px rgba(0, 173, 181, 0.18);
+  }
+
+  .translate-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    background: rgba(0, 173, 181, 0.08);
+    border: 1px solid rgba(0, 173, 181, 0.3);
+    border-radius: 7px;
+    color: #0d8087;
+    font-size: 12px;
+  }
+
+  .translate-chip svg {
+    width: 13px;
+    height: 13px;
+    flex: none;
+    animation: spin 0.9s linear infinite;
+  }
+
+  .type-bar {
+    flex-basis: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .type-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex: none;
+    white-space: nowrap;
+    height: 28px;
+    padding: 0 11px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  }
+
+  .type-chip:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .type-chip:active {
+    transform: translateY(0);
+  }
+
+  .type-chip strong {
+    color: var(--muted);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 11.5px;
+  }
+
+  .type-chip:hover strong {
+    color: var(--accent-dark);
+  }
+
+  .category.flash {
+    animation: categoryFlash 1.2s ease;
+  }
+
+  @keyframes categoryFlash {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(0, 173, 181, 0);
+    }
+    30% {
+      box-shadow: 0 0 0 4px rgba(0, 173, 181, 0.35);
+    }
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: rgba(0, 173, 181, 0.1);
+    border: 1px solid rgba(0, 173, 181, 0.45);
+    border-radius: 8px;
+    color: #0d6f75;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .status svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+  }
+
+  .categories {
+    margin-top: 26px;
+  }
+
+  .section-head,
+  .category-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .section-head {
+    margin-bottom: 14px;
+  }
+
+  .section-head h2,
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  .section-head h2::before,
+  .section-title::before {
+    content: "";
+    width: 4px;
+    height: 18px;
+    flex: none;
+    border-radius: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  }
+
+  .section-meta {
+    color: var(--muted);
+    font-size: 13px;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+  }
+
+  .category {
+    margin-bottom: 24px;
+    scroll-margin-top: 180px;
+  }
+
+  .category-head {
+    margin-bottom: 12px;
+  }
+
+  .category-head h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .category-head h3::before {
+    content: "";
+    width: 3px;
+    height: 14px;
+    flex: none;
+    border-radius: 2px;
+    background: var(--blue);
+  }
+
+  .badge {
+    padding: 2px 10px;
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 12px;
+  }
+
+  .expand-btn {
+    margin-left: auto;
+    height: 30px;
+    padding: 0 12px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+
+  .expand-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .section-title {
+    margin-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 178px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(34, 40, 49, 0.06);
+    transition: box-shadow 0.18s ease, transform 0.18s ease, border-color 0.18s ease;
+  }
+
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 12px;
+    right: 12px;
+    height: 2px;
+    border-radius: 0 0 4px 4px;
+    background: linear-gradient(90deg, var(--accent), #54d1d8);
+    opacity: 0;
+    transform: scaleX(0.4);
+    transform-origin: left;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+  }
+
+  .card:hover {
+    border-color: rgba(0, 173, 181, 0.55);
+    box-shadow: 0 10px 26px rgba(34, 40, 49, 0.12);
+    transform: translateY(-2px);
+  }
+
+  .card:hover::before {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .card.compact {
+    min-height: 0;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .card.compact .card-head img {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+  }
+
+  .card.compact .repo-name {
+    font-size: 14px;
+  }
+
+  .card.compact .owner,
+  .card.compact .orig-desc,
+  .card.compact .created {
+    display: none;
+  }
+
+  .card.compact .desc {
+    -webkit-line-clamp: 2;
+    min-height: 0;
+  }
+
+  .card.compact .open {
+    width: 26px;
+    height: 26px;
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .card-head img {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 8px;
+    border: 1px solid var(--line);
+    background: var(--surface-soft);
+  }
+
+  .title-box {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .repo-name {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.3;
+  }
+
+  .repo-name a {
+    color: var(--ink);
+    font-weight: 700;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+  }
+
+  .repo-name a:hover {
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .owner {
+    margin-top: 2px;
+    color: var(--muted);
+    font-size: 12px;
+    overflow-wrap: anywhere;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+  }
+
+  .open {
+    width: 28px;
+    height: 28px;
+    flex: none;
+    display: grid;
+    place-items: center;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .open:hover {
+    color: var(--blue);
+    border-color: var(--blue);
+    background: rgba(0, 173, 181, 0.08);
+  }
+
+  .open svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: 0;
+    color: var(--ink);
+    font-size: 13.5px;
+    line-height: 1.6;
+    min-height: 4.7em;
+  }
+
+  .orig-desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin: -4px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  .card-foot {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-top: auto;
+    color: var(--muted);
+    font-size: 12.5px;
+    line-height: 1.4;
+  }
+
+  .stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--ink);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stars svg {
+    width: 14px;
+    height: 14px;
+    color: var(--star);
+  }
+
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px rgba(34, 40, 49, 0.08);
+  }
+
+  .created {
+    margin-left: auto;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 11.5px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 8px;
+    background: var(--surface-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.6;
+    white-space: nowrap;
+  }
+
+  .card.compact .tag {
+    margin-left: auto;
+  }
+
+  .tooltip {
+    position: fixed;
+    z-index: 50;
+    max-width: 340px;
+    padding: 10px 12px;
+    background: #222831;
+    border: 1px solid #393e46;
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(34, 40, 49, 0.4);
+    color: #eeeeee;
+    font-size: 13px;
+    line-height: 1.6;
+    pointer-events: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+
+  .tooltip.visible {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .skeleton .line {
+    height: 12px;
+    border-radius: 6px;
+    background: linear-gradient(90deg, #e5e5e5 25%, #f5f5f5 50%, #e5e5e5 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
+  }
+
+  .head-skeleton {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar-skeleton {
+    width: 40px;
+    height: 40px;
+    flex: none;
+    border-radius: 8px;
+    background: #e5e5e5;
+  }
+
+  .w-70 {
+    width: 70%;
+  }
+
+  .w-90 {
+    width: 90%;
+  }
+
+  .w-60 {
+    width: 60%;
+  }
+
+  .w-40 {
+    width: 40%;
+  }
+
+  @keyframes shimmer {
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  .empty {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 44px 20px;
+    color: var(--muted);
+    text-align: center;
+    background: var(--surface);
+    border: 1px dashed var(--line-strong);
+    border-radius: 8px;
+  }
+
+  .empty svg {
+    width: 26px;
+    height: 26px;
+    color: var(--muted);
+  }
+
+  .empty p {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .load-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  .load-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 38px;
+    padding: 0 18px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 14px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+  }
+
+  .load-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-soft);
+  }
+
+  .load-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  .load-btn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: rgba(0, 173, 181, 0.25);
+  }
+
+  @media (max-width: 1100px) {
+    .type-bar {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .type-bar::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .topbar-inner,
+    main {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .summary {
+      align-items: flex-start;
+    }
+
+    .summary-right {
+      align-items: flex-start;
+      padding-left: 0;
+      border-left: none;
+    }
+
+    .summary-chips {
+      justify-content: flex-start;
+    }
+
+    .type-bar {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      margin: 12px -16px -2px;
+      padding: 0 16px 6px;
+      scrollbar-width: none;
+    }
+
+    .type-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .grid,
+    .category-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .created {
+      margin-left: 0;
+    }
+
+    .category {
+      scroll-margin-top: 230px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+
+    .live-badge::before {
+      animation: none;
+    }
+  }
+
+  /* ── MiMo-style editorial redesign (four-color palette) ───────────── */
+
+  :root {
+    --font-display: "Questrial", "Century Gothic", "Avenir Next", "Segoe UI", sans-serif;
+    --font-serif: "Huiwen Mincho", "Noto Serif SC", "Songti SC", "STSong", Georgia, serif;
+    --font-sans: "PingFang SC", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+    --radius: 4px;
+  }
+
+  body {
+    background: #eeeeee;
+    font-family: var(--font-sans);
+  }
+
+  .topbar {
+    position: relative;
+    z-index: 40;
+    background: #ffffff;
+    color: #222831;
+    border-bottom: 1px solid rgba(57, 62, 70, 0.12);
+  }
+
+  .topbar-inner {
+    height: 64px;
+    padding: 0 24px;
+    flex-wrap: nowrap;
+  }
+
+  .brand {
+    font-family: var(--font-display);
+    font-size: 18px;
+    letter-spacing: 0.6px;
+  }
+
+  .brand svg {
+    width: 19px;
+    height: 19px;
+    color: #00adb5;
+  }
+
+  .live-badge {
+    border: 1px solid rgba(0, 173, 181, 0.4);
+    background: rgba(0, 173, 181, 0.12);
+    color: #0d8087;
+    font-size: 10px;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+  }
+
+  .controls {
+    gap: 12px;
+  }
+
+  .segment {
+    padding: 4px;
+    background: rgba(57, 62, 70, 0.08);
+    border: 1px solid rgba(57, 62, 70, 0.14);
+    border-radius: 999px;
+  }
+
+  .segment button {
+    height: 30px;
+    padding: 0 15px;
+    border-radius: 999px;
+    color: rgba(57, 62, 70, 0.72);
+    font-size: 12.5px;
+    letter-spacing: 0.4px;
+  }
+
+  .segment button:hover {
+    background: rgba(0, 173, 181, 0.1);
+    color: #0d8087;
+  }
+
+  .segment button.active {
+    background: #00adb5;
+    color: #eeeeee;
+    box-shadow: 0 1px 3px rgba(34, 40, 49, 0.25);
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: 1px solid rgba(57, 62, 70, 0.25);
+    color: #222831;
+  }
+
+  .icon-btn:hover {
+    background: rgba(0, 173, 181, 0.1);
+    border-color: rgba(0, 173, 181, 0.5);
+  }
+
+  .settings {
+    position: relative;
+  }
+
+  .settings-panel {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: -6px;
+    z-index: 60;
+    width: 330px;
+    max-width: calc(100vw - 32px);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #ffffff;
+    border: 1px solid rgba(57, 62, 70, 0.16);
+    border-radius: 12px;
+    box-shadow: 0 18px 50px -18px rgba(34, 40, 49, 0.32);
+  }
+
+  .settings-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(57, 62, 70, 0.1);
+  }
+
+  .settings-head strong {
+    font-family: var(--font-serif);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .settings-state {
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(0, 173, 181, 0.1);
+    color: #0d8087;
+    font-size: 11px;
+    letter-spacing: 0.4px;
+  }
+
+  .settings-state.off {
+    background: rgba(57, 62, 70, 0.1);
+    color: #393e46;
+  }
+
+  .settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .settings-label {
+    flex: none;
+    color: #393e46;
+    font-size: 12px;
+    letter-spacing: 0.4px;
+  }
+
+  .settings-value {
+    color: #222831;
+    font-size: 12.5px;
+    text-align: right;
+    word-break: break-all;
+  }
+
+  .settings-value.mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 11.5px;
+  }
+
+  .settings-select {
+    max-width: 180px;
+    height: 30px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: 1px solid rgba(57, 62, 70, 0.25);
+    border-radius: 8px;
+    color: #222831;
+    font-size: 12.5px;
+  }
+
+  .settings-input {
+    width: 190px;
+    max-width: 190px;
+    height: 30px;
+    padding: 0 8px;
+    background: #ffffff;
+    border: 1px solid rgba(57, 62, 70, 0.25);
+    border-radius: 8px;
+    color: #222831;
+    font-size: 12px;
+    font-family: inherit;
+  }
+
+  .settings-input.mono {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Courier New", monospace;
+    font-size: 11.5px;
+  }
+
+  .settings-input:focus-visible {
+    outline: 2px solid #00adb5;
+    outline-offset: 1px;
+  }
+
+  .settings-select:focus-visible {
+    outline: 2px solid #00adb5;
+    outline-offset: 1px;
+  }
+
+  .settings-foot {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(57, 62, 70, 0.1);
+  }
+
+  .settings-btn {
+    height: 30px;
+    padding: 0 13px;
+    background: #ffffff;
+    border: 1px solid rgba(57, 62, 70, 0.3);
+    border-radius: 999px;
+    color: #222831;
+    font-size: 12px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+
+  .settings-btn:hover {
+    background: #222831;
+    border-color: #222831;
+    color: #eeeeee;
+  }
+
+  .settings-hint {
+    color: #393e46;
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  /* Hero */
+
+  .hero {
+    position: relative;
+    height: 430px;
+    overflow: hidden;
+    isolation: isolate;
+    background: #e8eaec;
+    border-bottom: 1px solid rgba(57, 62, 70, 0.12);
+  }
+
+  .hero__bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .hero__art {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .hero__mask {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    display: block;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    max-width: 1120px;
+    height: 100%;
+    margin: 0 auto;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .hero__eyebrow {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 3.2px;
+    text-transform: uppercase;
+    color: #00adb5;
+  }
+
+  .hero__title {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 54px;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    color: #222831;
+  }
+
+  .hero__subtitle {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 1.6;
+    color: rgba(34, 40, 49, 0.92);
+    max-width: 780px;
+    min-height: 2em;
+  }
+
+  .hero__subtitle .char {
+    display: none;
+  }
+
+  .hero__subtitle .char.is-typed {
+    display: inline;
+  }
+
+  .hero__subtitle .type-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    margin-left: 2px;
+    background: #00adb5;
+    vertical-align: -0.15em;
+    animation: heroCaret 0.75s step-end infinite;
+  }
+
+  .hero__subtitle.is-done .type-caret {
+    animation: none;
+    opacity: 0;
+  }
+
+  @keyframes heroCaret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  .hero__actions {
+    display: flex;
+    gap: 14px;
+    margin-top: 18px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 24px;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 200ms ease, background-color 200ms ease, color 200ms ease, border-color 200ms ease;
+  }
+
+  .btn__arrow {
+    width: 14px;
+    height: 14px;
+    flex: none;
+    opacity: 1;
+    margin-left: 0;
+    transition: transform 200ms ease, opacity 200ms ease;
+  }
+
+  .btn:hover .btn__arrow {
+    transform: translateX(2px);
+  }
+
+  .btn--primary {
+    background: #00adb5;
+    color: #eeeeee;
+    border: 1px solid #00adb5;
+  }
+
+  .btn--primary:hover {
+    background: #0a8b92;
+    border-color: #0a8b92;
+    transform: translateY(-1px);
+  }
+
+  .btn--ghost {
+    background: transparent;
+    color: #222831;
+    border: 1px solid rgba(57, 62, 70, 0.5);
+  }
+
+  .btn--ghost:hover {
+    background: #222831;
+    color: #eeeeee;
+    border-color: #222831;
+    transform: translateY(-1px);
+  }
+
+  /* Sticky summary masthead */
+
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .stat {
+    min-width: 96px;
+    padding: 6px 12px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 173, 181, 0.45);
+    border-radius: 6px;
+    box-shadow: none;
+  }
+
+  .stat strong {
+    font-family: var(--font-display);
+    font-size: 19px;
+    letter-spacing: 0.2px;
+    color: #00adb5;
+  }
+
+  .stat span {
+    font-size: 10.5px;
+    letter-spacing: 0.9px;
+    text-transform: uppercase;
+  }
+
+  .summary-chips {
+    gap: 8px;
+  }
+
+  .model-chip,
+  .translate-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    letter-spacing: 0.3px;
+  }
+
+  .model-chip {
+    background: rgba(0, 173, 181, 0.08);
+    border: 1px solid rgba(0, 173, 181, 0.3);
+    color: #0d8087;
+  }
+
+  .translate-chip {
+    background: rgba(0, 173, 181, 0.1);
+    border: 1px solid rgba(0, 173, 181, 0.4);
+    color: #0d6f75;
+  }
+
+  .type-bar {
+    margin-top: 0;
+    padding-top: 0;
+  }
+
+  .type-chip {
+    height: 28px;
+    padding: 0 12px;
+    background: #ffffff;
+    border: 1px solid rgba(57, 62, 70, 0.18);
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  .type-chip:hover {
+    border-color: #00adb5;
+    background: rgba(0, 173, 181, 0.08);
+    color: #0d8087;
+  }
+
+  .type-chip strong {
+    color: rgba(57, 62, 70, 0.65);
+  }
+
+  .type-chip:hover strong {
+    color: #0a8b92;
+  }
+
+  body.page-scrolled .status {
+    position: sticky;
+    top: var(--status-top, 72px);
+    z-index: 29;
+    margin-top: 12px;
+  }
+
+  /* Sections and category indexes */
+
+  .categories {
+    counter-reset: category;
+    margin-top: 34px;
+  }
+
+  .category {
+    counter-increment: category;
+    margin-bottom: 34px;
+  }
+
+  .section-head h2,
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .section-head h2::before,
+  .section-title::before {
+    width: 24px;
+    height: 2px;
+    border-radius: 0;
+    background: #00adb5;
+  }
+
+  .section-meta {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+  }
+
+  .category-head h3 {
+    font-family: var(--font-serif);
+    font-size: 17px;
+    font-weight: 500;
+  }
+
+  .category-head h3::before {
+    content: counter(category, decimal-leading-zero);
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    background: none;
+    font-family: var(--font-display);
+    font-size: 13px;
+    letter-spacing: 0.8px;
+    color: #00adb5;
+  }
+
+  .badge {
+    padding: 2px 10px;
+    background: rgba(238, 238, 238, 0.6);
+    border: 1px solid rgba(57, 62, 70, 0.14);
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.6px;
+  }
+
+  /* Cards */
+
+  .card {
+    border: 1px solid rgba(57, 62, 70, 0.16);
+    border-radius: 4px;
+    box-shadow: none;
+    background: #ffffff;
+  }
+
+  .card::before {
+    display: none;
+  }
+
+  .card:hover {
+    border-color: rgba(0, 173, 181, 0.65);
+    box-shadow: 0 12px 30px rgba(34, 40, 49, 0.1);
+    transform: translateY(-2px);
+  }
+
+  .card.compact .card-head img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
+  .repo-name {
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .repo-name a {
+    color: #222831;
+    text-decoration: none;
+    transition: color 150ms ease;
+  }
+
+  .repo-name a:hover {
+    color: #00adb5;
+  }
+
+  .owner {
+    font-size: 11px;
+    letter-spacing: 0.4px;
+  }
+
+  .open {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+  }
+
+  .open:hover {
+    background: rgba(0, 173, 181, 0.08);
+  }
+
+  .desc {
+    font-size: 13px;
+    line-height: 1.65;
+    color: #393e46;
+  }
+
+  .orig-desc {
+    font-size: 11.5px;
+    line-height: 1.5;
+    color: rgba(57, 62, 70, 0.7);
+  }
+
+  .stars svg {
+    color: #00adb5;
+  }
+
+  .tag {
+    background: rgba(0, 173, 181, 0.08);
+    border: 1px solid rgba(0, 173, 181, 0.28);
+    color: #0d8087;
+    font-size: 10.5px;
+    letter-spacing: 0.3px;
+  }
+
+  .expand-btn,
+  .load-btn {
+    height: 32px;
+    padding: 0 14px;
+    border: 1px solid rgba(57, 62, 70, 0.3);
+    border-radius: 999px;
+    background: #ffffff;
+    font-size: 12.5px;
+    letter-spacing: 0.4px;
+    transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+  }
+
+  .expand-btn:hover,
+  .load-btn:hover {
+    background: #222831;
+    border-color: #222831;
+    color: #eeeeee;
+  }
+
+  .load-btn svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .tooltip {
+    border-radius: 4px;
+  }
+
+  .empty {
+    border-radius: 4px;
+  }
+
+  .footer {
+    border-top: 1px solid rgba(57, 62, 70, 0.14);
+    background: #eeeeee;
+    padding: 36px 24px;
+    text-align: center;
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px 10px;
+    font-size: 11.5px;
+    letter-spacing: 0.6px;
+    color: #393e46;
+  }
+
+  .footer__sep {
+    color: rgba(57, 62, 70, 0.4);
+    user-select: none;
+  }
+
+  .footer__inner a {
+    color: #222831;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 0.5px;
+    transition: color 180ms ease;
+  }
+
+  .footer__inner a:hover {
+    color: #00adb5;
+  }
+
+  @media (max-width: 640px) {
+    .topbar-inner {
+      height: auto;
+      min-height: 56px;
+      padding: 10px 16px;
+      gap: 10px;
+    }
+
+    .hero {
+      height: 360px;
+    }
+
+    .hero__mask {
+      display: none;
+    }
+
+    .hero__content {
+      padding: 0 20px;
+      gap: 12px;
+    }
+
+    .hero__eyebrow {
+      font-size: 10px;
+      letter-spacing: 2.4px;
+    }
+
+    .hero__title {
+      font-size: 34px;
+    }
+
+    .hero__subtitle {
+      font-size: 15px;
+      min-height: 3em;
+    }
+
+    .hero__actions {
+      width: 100%;
+      max-width: 320px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      flex: 1;
+      height: 38px;
+      padding: 0 14px;
+      font-size: 13px;
+    }
+
+    .summary {
+      align-items: flex-start;
+      border-radius: 12px;
+    }
+
+    .summary-head {
+      align-items: flex-start;
+    }
+  }
+</style>
+</head>
+<body>
+  <header class="topbar" id="top">
+    <div class="topbar-inner">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+        GitHub 高星新项目
+        <span class="live-badge">实时</span>
+      </div>
+      <div class="controls">
+        <div class="segment" role="group" aria-label="统计周期">
+          <button type="button" data-days="7" class="active">7 天</button>
+          <button type="button" data-days="30">30 天</button>
+          <button type="button" data-days="90">90 天</button>
+        </div>
+        <button type="button" id="refresh" class="icon-btn" aria-label="刷新" title="刷新">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"></path>
+            <path d="M21 3v5h-5"></path>
+          </svg>
+        </button>
+        <div class="settings">
+          <button type="button" id="settingsBtn" class="icon-btn" aria-label="设置" title="设置" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
+          <div class="settings-panel" id="settingsPanel" hidden role="dialog" aria-label="设置">
+            <div class="settings-head">
+              <strong>设置</strong>
+              <span class="settings-state" id="settingsState">检测中</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">调用方式</span>
+              <span class="settings-value" id="settingsMode">本地 Ollama 模型</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">接口地址</span>
+              <input class="settings-input mono" id="settingsBase" type="text" spellcheck="false" autocomplete="off" aria-label="接口地址" placeholder="http://localhost:11434/v1/">
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">当前模型</span>
+              <input class="settings-input" id="settingsModelName" type="text" list="settingsModelList" spellcheck="false" autocomplete="off" aria-label="模型名称" placeholder="qwen3:1.7b">
+              <datalist id="settingsModelList"></datalist>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">API Key</span>
+              <input class="settings-input" id="settingsApiKey" type="password" autocomplete="off" aria-label="API Key" placeholder="可选">
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">数据源</span>
+              <span class="settings-value">GitHub Search API</span>
+            </div>
+            <div class="settings-foot">
+              <button type="button" id="settingsSave" class="settings-btn">保存设置</button>
+              <button type="button" id="settingsRecheck" class="settings-btn">重新测试</button>
+              <span class="settings-hint" id="settingsHint"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero" id="hero">
+    <div class="hero__bg" aria-hidden="true">
+      <svg class="hero__art" viewBox="0 0 1440 430" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <pattern id="heroGrid" width="48" height="48" patternUnits="userSpaceOnUse">
+            <path d="M48 0H0V48" fill="none" stroke="#393e46" stroke-opacity="0.1"></path>
+          </pattern>
+        </defs>
+        <rect width="1440" height="430" fill="#e8eaec"></rect>
+        <rect width="1440" height="430" fill="url(#heroGrid)"></rect>
+        <text x="64" y="330" font-family="Questrial, Segoe UI, sans-serif" font-size="150" letter-spacing="4" fill="#222831" fill-opacity="0.05">GitHub</text>
+        <polyline points="180,110 290,60 420,140 560,80 700,170 840,90 980,150 1120,70 1260,120" fill="none" stroke="#00adb5" stroke-opacity="0.45" stroke-width="1.5"></polyline>
+        <circle cx="180" cy="110" r="3" fill="#00adb5"></circle>
+        <circle cx="290" cy="60" r="2.5" fill="#222831" fill-opacity="0.8"></circle>
+        <circle cx="420" cy="140" r="2.5" fill="#00adb5"></circle>
+        <circle cx="560" cy="80" r="3" fill="#222831" fill-opacity="0.8"></circle>
+        <circle cx="700" cy="170" r="2.5" fill="#00adb5"></circle>
+        <circle cx="840" cy="90" r="3" fill="#222831" fill-opacity="0.8"></circle>
+        <circle cx="980" cy="150" r="2.5" fill="#00adb5"></circle>
+        <circle cx="1120" cy="70" r="3" fill="#222831" fill-opacity="0.8"></circle>
+        <circle cx="1260" cy="120" r="2.5" fill="#00adb5"></circle>
+        <rect x="170" y="170" width="260" height="150" rx="8" fill="rgba(255,255,255,0.6)" stroke="#393e46" stroke-opacity="0.3"></rect>
+        <circle cx="196" cy="198" r="5" fill="#00adb5"></circle>
+        <circle cx="214" cy="198" r="5" fill="#393e46"></circle>
+        <circle cx="232" cy="198" r="5" fill="#222831" fill-opacity="0.35"></circle>
+        <path d="M196 226h120" stroke="#00adb5" stroke-opacity="0.5" stroke-width="4" stroke-linecap="round"></path>
+        <path d="M196 244h170" stroke="#393e46" stroke-opacity="0.4" stroke-width="4" stroke-linecap="round"></path>
+        <path d="M196 262h140" stroke="#393e46" stroke-opacity="0.22" stroke-width="4" stroke-linecap="round"></path>
+        <rect x="940" y="190" width="360" height="190" rx="8" fill="rgba(255,255,255,0.7)" stroke="#393e46" stroke-opacity="0.3"></rect>
+        <circle cx="968" cy="214" r="5" fill="#00adb5"></circle>
+        <circle cx="986" cy="214" r="5" fill="#393e46"></circle>
+        <circle cx="1004" cy="214" r="5" fill="#eeeeee" stroke="#222831" stroke-opacity="0.4"></circle>
+        <text x="968" y="250" font-family="Consolas, monospace" font-size="15" fill="#00adb5">&gt;_</text>
+        <path d="M1000 244h150" stroke="#393e46" stroke-opacity="0.5" stroke-width="4" stroke-linecap="round"></path>
+        <path d="M1000 262h190" stroke="#393e46" stroke-opacity="0.3" stroke-width="4" stroke-linecap="round"></path>
+        <path d="M1000 280h120" stroke="#00adb5" stroke-opacity="0.75" stroke-width="4" stroke-linecap="round"></path>
+        <rect x="1120" y="278" width="3" height="14" fill="#00adb5"></rect>
+        <path d="M1000 298h160" stroke="#393e46" stroke-opacity="0.22" stroke-width="4" stroke-linecap="round"></path>
+      </svg>
+    </div>
+    <canvas class="hero__mask" id="heroMask" aria-hidden="true"></canvas>
+    <div class="hero__content">
+      <p class="hero__eyebrow">GitHub Trending · 新增高星项目</p>
+      <h1 class="hero__title">GitHub 高星项目</h1>
+      <p class="hero__subtitle" id="heroSubtitle">面向开发者的 GitHub 新增高星项目速览，按 Stars 排序，由 AI 模型自动翻译项目简介。</p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#categoryList">
+          <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6.3333 3.66665H12.3333V9.66665" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3.848 12.152L12.3333 3.66665" stroke="currentColor" stroke-width="1.33333"></path>
+          </svg>
+          查看分类
+        </a>
+        <a class="btn btn--ghost" href="#grid">
+          <svg class="btn__arrow" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M6.3333 3.66665H12.3333V9.66665" stroke="currentColor" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3.848 12.152L12.3333 3.66665" stroke="currentColor" stroke-width="1.33333"></path>
+          </svg>
+          全部项目
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <main>
+    <section class="summary-head">
+      <div>
+        <h1>新增高星项目</h1>
+        <p class="subtitle" id="subtitle">近 7 天创建 · 按 Stars 排序</p>
+      </div>
+      <div class="summary-right">
+        <div class="stats">
+          <div class="stat" aria-live="polite">
+            <strong id="count">--</strong>
+            <span>项目数</span>
+          </div>
+          <div class="stat">
+            <strong id="totalStars">--</strong>
+            <span>总 Stars</span>
+          </div>
+          <div class="stat">
+            <strong id="langCount">--</strong>
+            <span>语言数</span>
+          </div>
+        </div>
+        <div class="summary-chips">
+          <div class="model-chip" id="modelChip" hidden>
+            <span class="model-dot"></span>
+            AI 模型：<span id="modelName"></span>
+          </div>
+          <div class="translate-chip" id="translateChip" hidden role="status" aria-live="polite">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-6.22-8.56"></path>
+            </svg>
+            <span id="translateText">AI 模型翻译中…</span>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="summary">
+      <div class="type-bar" id="typeBar" aria-label="项目类型"></div>
+    </section>
+
+    <div id="status" class="status" hidden role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+        <path d="M12 9v4"></path>
+        <path d="M12 17h.01"></path>
+      </svg>
+      <span id="statusText"></span>
+    </div>
+
+    <section class="categories" aria-label="分类项目">
+      <div class="section-head">
+        <h2>分类项目</h2>
+        <span class="section-meta" id="categoryCount">--</span>
+      </div>
+      <div id="categoryList" aria-live="polite"></div>
+    </section>
+
+    <h2 class="section-title">全部项目</h2>
+    <section id="grid" class="grid" aria-live="polite"></section>
+
+    <div class="load-wrap">
+      <button type="button" id="loadMore" class="load-btn" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M5 12h14"></path>
+          <path d="M12 5v14"></path>
+        </svg>
+        加载更多
+      </button>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <span>GitHub 高星项目</span>
+      <span class="footer__sep">·</span>
+      <span>数据来源 GitHub Search API</span>
+      <span class="footer__sep">·</span>
+      <span>AI 模型自动翻译</span>
+      <span class="footer__sep">·</span>
+      <a href="#top">回到顶部</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var grid = document.getElementById("grid");
+      var status = document.getElementById("status");
+      var statusText = document.getElementById("statusText");
+      var countEl = document.getElementById("count");
+      var totalStarsEl = document.getElementById("totalStars");
+      var langCountEl = document.getElementById("langCount");
+      var subtitleEl = document.getElementById("subtitle");
+      var refreshBtn = document.getElementById("refresh");
+      var loadMoreBtn = document.getElementById("loadMore");
+      var dayBtns = document.querySelectorAll(".segment button");
+      var categoryList = document.getElementById("categoryList");
+      var categoryCount = document.getElementById("categoryCount");
+      var modelChip = document.getElementById("modelChip");
+      var modelNameEl = document.getElementById("modelName");
+      var translateChip = document.getElementById("translateChip");
+      var translateText = document.getElementById("translateText");
+      var typeBar = document.getElementById("typeBar");
+      var subtitleTimer = 0;
+      var settingsBtn = document.getElementById("settingsBtn");
+      var settingsPanel = document.getElementById("settingsPanel");
+      var settingsState = document.getElementById("settingsState");
+      var settingsBase = document.getElementById("settingsBase");
+      var settingsModelName = document.getElementById("settingsModelName");
+      var settingsModelList = document.getElementById("settingsModelList");
+      var settingsApiKey = document.getElementById("settingsApiKey");
+      var settingsSave = document.getElementById("settingsSave");
+      var settingsRecheck = document.getElementById("settingsRecheck");
+      var settingsHint = document.getElementById("settingsHint");
+      var settingsMode = document.getElementById("settingsMode");
+      var summaryOkCount = 0;
+      var summaryFailCount = 0;
+      var summaryWarnShown = false;
+
+      var OLLAMA_BASE = window.location.protocol === "file:"
+        ? "http://127.0.0.1:5173/v1"
+        : window.location.origin + "/v1";
+
+      function directModelBase() {
+        var base = String(modelConfig.base || "").trim().replace(/\/+$/, "");
+        if (!base || !isLocalBase(base)) {
+          return "";
+        }
+        return base.indexOf("/v1") === -1 ? base + "/v1" : base;
+      }
+
+      var DEFAULT_MODEL_CONFIG = {
+        base: "http://localhost:11434/v1/",
+        model: "qwen3:1.7b",
+        apiKey: ""
+      };
+      var modelConfig = loadModelConfig();
+
+      function loadModelConfig() {
+        try {
+          var saved = JSON.parse(localStorage.getItem("gh_model_config_v1") || "{}");
+          return {
+            base: saved.base || DEFAULT_MODEL_CONFIG.base,
+            model: saved.model || DEFAULT_MODEL_CONFIG.model,
+            apiKey: saved.apiKey || ""
+          };
+        } catch (err) {
+          return {
+            base: DEFAULT_MODEL_CONFIG.base,
+            model: DEFAULT_MODEL_CONFIG.model,
+            apiKey: ""
+          };
+        }
+      }
+
+      function saveModelConfig() {
+        try {
+          localStorage.setItem("gh_model_config_v1", JSON.stringify(modelConfig));
+        } catch (err) {}
+      }
+
+      var CACHE_KEY = "gh_ollama_summaries_v7";
+      var SUMMARY_SYSTEM = "你是一名中文科技编辑。给你一个开源项目的资料，请输出两行内容：第一行写标签，用 4 到 5 个汉字概括该项目最细分的领域，例如「语音交互」「3D 渲染」「数据可视化」；第二行用简体中文写一句 30 到 80 字的项目简介，必须以“该项目”开头。请以“官方简介”为主要依据概括项目的真实功能与用途，不要使用宣传标语、口号、首页标题或“runs anywhere. uses anything.”这类装饰性短语；若没有官方简介，再从项目文档中提取有信息量的描述。游戏、模组等专有名称请使用常见中文译名（如 Pokemon 译为宝可梦、Zelda 译为塞尔达、Minecraft 译为我的世界）。不要提到资料格式；不要输出英文；不要用标题、列表或加粗；只输出这两行。";
+
+      var state = {
+        days: 7,
+        page: 1,
+        perPage: 30,
+        loading: false,
+        repos: [],
+        model: "",
+        summaries: {},
+        expanded: {}
+      };
+
+      var summaryQueue = [];
+      var activeSummaries = 0;
+
+      var LANGUAGE_COLORS = {
+        "JavaScript": "#f1e05a",
+        "TypeScript": "#3178c6",
+        "Python": "#3572a5",
+        "Go": "#00add8",
+        "Rust": "#dea584",
+        "Java": "#b07219",
+        "C++": "#f34b7d",
+        "C": "#555555",
+        "C#": "#178600",
+        "PHP": "#4f5d95",
+        "Ruby": "#701516",
+        "Swift": "#f05138",
+        "Kotlin": "#a97bff",
+        "HTML": "#e34c26",
+        "CSS": "#663399",
+        "Shell": "#89e051",
+        "Jupyter Notebook": "#da5b0b",
+        "Vue": "#41b883",
+        "Svelte": "#ff3e00",
+        "Dart": "#00b4ab",
+        "Zig": "#ec915c",
+        "Lua": "#000080",
+        "R": "#198ce7",
+        "Scala": "#c22d40",
+        "Haskell": "#5e5086",
+        "Elixir": "#6e4a7e",
+        "Clojure": "#db5855",
+        "Perl": "#0298c3",
+        "Objective-C": "#438eff",
+        "Assembly": "#6e4c13",
+        "PowerShell": "#012456",
+        "Dockerfile": "#384d54",
+        "Makefile": "#427819"
+      };
+
+      var TRANSLATIONS = {
+        "MoonshotAI/Kimi-K3": "开放前沿智能",
+        "yc-software/qm": "面向工作的多人 Agent 运行框架",
+        "bashalarmistalt/decimen-optical-transfer": "Fountain 编码 QR 文件传输演示：仅靠屏幕和摄像头在两台设备间传文件，无需网络、应用或配对；可传 512KB/2MB 图片，扩展实验中手机对手机约 128KB/s。",
+        "xikhar/persona": "让实时语音活起来",
+        "QwenAudio/qwen-audio-agent": "面向 AI Agent 的实时语音运行时，让 Agent 持续说话、工作并保持在场。",
+        "xdash/FDE-the-Guidance-Book-of-Forward-Deployed-Engineer": "FDE（前沿部署工程师）从零入门指南，基于范冰《增长黑客》原书框架。",
+        "0xwilliamortiz/ponytail-improved": "让 AI Agent 像房间里最懒的资深开发一样思考，最好的代码是你没写过的代码。",
+        "gavamedia/deltafin": "在单台设备上运行完整 Kimi K3，并提供 OpenAI 兼容 API，用于本地聊天和编码 Agent。",
+        "DramaticShape/DramaticShapeVoxelMod": "宝可梦世界的 3D 立体模型 Mod：地形变成真实几何体，带体素水波、倒影、阴影和移轴模糊，战斗直接发生在场景中；纯视觉效果，不改玩法。",
+        "0xwilliamortiz/openclaude-improved": "随处可运行，什么都能用。",
+        "microsoft/skill-recorder": "该项目用于录制真实操作过程，并通过 GitHub Copilot 把操作还原成 AI Agent 可复用的技能或自动化流程。",
+        "talivia-group/talivia": "面向创始人的开源自托管、营收优先分析平台，包括 Web 分析、会话回放、营收归因和客户营收集成，是 datafast 的替代方案。",
+        "WilonityDev/WilonityLoader": "游戏作弊工具库，含 spoofer、驱动绕过、免检注入器，支持 20 多款游戏（RUST、CS2、Valorant、Tarkov 等），提供内核伪装、HWID 清理、反作弊绕过及 ESP、自瞄、透视等功能。",
+        "wassgha/rescript": "开源的、基于转录的浏览器端视频/音频编辑器。",
+        "sqliteai/waste": "在内存不足时运行完整 2.78 万亿参数 Kimi K3，直接从 NVMe 流式加载激活权重；无依赖、可嵌入的 C 推理引擎。",
+        "Noniv/snowflow_demo": "用 WebGPU、Babylon.js 和手写 WGSL 实现的实时程序化下雪渲染演示，含 GPU 地形、积雪变形、程序化角色、布料、水花、法术、大气和后期处理，且不使用纹理、网格、HDRI 或动画资源。",
+        "0xwilliamortiz/ratchet": "你的 Agent 读取规则，这个工具负责检查它有没有遵守。",
+        "achimala/TheLongSilence": "由 Claude Opus 5 构建的太空探索游戏。",
+        "deerwork-ai/deer-workflow": "开源图工程运行时，编排保留在 TypeScript 中，语义工作委托给可替换的 Agent 运行时。",
+        "ddoemonn/interior": "面向 React 的微交互库，专为点击之后的半秒设计。",
+        "Packets/tew": "仓库基本为空，README 只有一行标题“tew”，没有可概括的实质内容。",
+        "lij768423-svg/grok-register-panel": "Grok 注册引擎（Camoufox）+ 实时网页监控面板。",
+        "PipeNetwork/kimi-k3-mlx": "MoonshotAI/Kimi-K3 的 MLX 移植版（2.78T 多模态 MoE），含流式转换器、REAP 专家剪枝和分语言专家重叠分析。",
+        "Infatoshi/netherite": "从零用 C/CUDA 实现的 Minecraft 1.11.2（与官方 Java 版逐位校验一致）+ 批量 CUDA 强化学习，可在单 GPU 上同步运行 7200 个世界。",
+        "deedy/qr-data-transfer": "QRFerry：以动态动画二维码流在设备间传输文件，收发全程在浏览器内完成，文件不经过应用服务器；使用 RaptorQ 纠错和整文件校验。",
+        "ChrisMack32/Locus": "免费开源的 iPhone 位置修改工具（MIT 协议）。",
+        "elayadesign/ai-design-skills": "面向 Claude Code、Cursor、Codex、Windsurf 等 AI 编码工具的设计技能集合，每个技能是独立文件夹、按需安装；目前含 landing-page-design 技能，更多制作中。",
+        "sii-research/tau-0-vla": "τ0-VLA 的官方实现：带世界模型引导测试时计算的层次化机器人基础模型。",
+        "Kenton-GMI/sakura-crossing": "可探索的日本郊区铁路道口街区，位于一颗小星球上，用 Three.js 将 3D 渲染成 2D 赛璐璐风格动画背景，无图片资源。",
+        "EstebanPdN/zelda-alttp-3ds": "基于 zelda3 的《塞尔达传说：众神的三角力量》Nintendo 3DS 双屏移植版。",
+        "steelbrain/reims-vgpu": "reims-vgpu：面向 macOS 客户的实验性虚拟 GPU。"
+      };
+
+      var CATEGORY_RULES = [
+        { name: "AI 与模型", test: /kimi|qwen|llm|mlx|multimodal|moonshot|2\.78|vla|robot|frontier|voice|inference|delta attention|moore/i },
+        { name: "Agent 与自动化", test: /agent|harness|workflow|orchestr|register|monitor|claude|automation|grok|bot/i },
+        { name: "系统与虚拟化", test: /vgpu|virtual|macos|kernel|spoof|inject|cheat|hardware|location|teleport|iphone|bypass|driver/i },
+        { name: "游戏与 3D", test: /game|mod|voxel|minecraft|zelda|pokemon|3d|render|webgpu|three|snow|space|diorama|battle|sakura/i },
+        { name: "文件与传输", test: /qr|transfer|fountain|camera|ferry/i },
+        { name: "开发者工具", test: /react|editor|framework|library|cli|api server|design skills|guide|engineer|typescript|javascript|runtime|sqlite/i },
+        { name: "数据分析", test: /analytics|revenue|attribution|replay|datafast/i },
+        { name: "其他", test: /.*/ }
+      ];
+
+      var TAG_RULES = [
+        { tag: "语音交互", test: /audio|voice|speech|语音|实时语音/i },
+        { tag: "多智能体", test: /multi.?agent|agentic|harness|orchestr|智能体|多agent/i },
+        { tag: "开源大模型", test: /kimi|qwen|llm|moonshot|frontier|model|inference|mlx|大模型/i },
+        { tag: "3D 渲染", test: /voxel|3d|render|webgpu|three|diorama/i },
+        { tag: "游戏模组", test: /game|mod|pokemon|zelda|minecraft|sakura|battle/i },
+        { tag: "文件传输", test: /qr|transfer|fountain|camera|ferry|传输/i },
+        { tag: "数据分析", test: /analytics|revenue|attribution|datafast|分析/i },
+        { tag: "技能工具", test: /recorder|record|replay|skill|技能/i },
+        { tag: "终端工具", test: /cli|terminal|shell|command|terminal/i },
+        { tag: "开发工具", test: /editor|framework|library|runtime|sqlite|react|typescript|javascript|design skills|guide|engineer|book/i },
+        { tag: "虚拟化", test: /vgpu|virtual|container|docker|vm|spoof|inject|driver/i },
+        { tag: "系统工具", test: /macos|kernel|linux|windows|hardware|system|iphone|teleport|bypass/i },
+        { tag: "网络工具", test: /net|network|proxy|http|api server/i },
+        { tag: "安全工具", test: /security|auth|password|privacy|安全/i },
+        { tag: "媒体处理", test: /video|image|photo|media|音频/i },
+        { tag: "金融工具", test: /finance|trading|money|金融/i },
+        { tag: "移动应用", test: /mobile|ios|android|app/i },
+        { tag: "数据库", test: /database|sql|db/i },
+        { tag: "AI 工具", test: /ai|gpt|chat|intelligen/i },
+        { tag: "开源项目", test: /open.?source|开源/i }
+      ];
+
+      var CATEGORY_TAGS = {
+        "Agent 与自动化": "自动化工具",
+        "AI 与模型": "AI 模型",
+        "游戏与 3D": "游戏开发",
+        "开发者工具": "开发工具",
+        "文件与传输": "文件传输",
+        "数据分析": "数据分析",
+        "系统与虚拟化": "系统虚拟化",
+        "其他": "实用工具"
+      };
+
+      var GAME_NAMES = [
+        ["The Legend of Zelda", "《塞尔达传说》"],
+        ["Dramatic Shape Voxel Mod", "戏剧化体素模组"],
+        ["Minecraft", "我的世界"],
+        ["Pokémon", "宝可梦"],
+        ["Pokemon", "宝可梦"],
+        ["Zelda", "塞尔达"],
+        ["Terraria", "泰拉瑞亚"],
+        ["Stardew Valley", "星露谷物语"],
+        ["Fortnite", "堡垒之夜"],
+        ["Roblox", "罗布乐思"],
+        ["Elden Ring", "艾尔登法环"],
+        ["Voxel Mod", "体素模组"]
+      ];
+
+      function translateGameNames(text) {
+        var value = String(text || "");
+        GAME_NAMES.forEach(function (pair) {
+          value = value.replace(new RegExp(pair[0].replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"), pair[1]);
+        });
+        return value;
+      }
+
+      var numberFormat = new Intl.NumberFormat("zh-CN");
+
+      function loadCachedSummaries() {
+        try {
+          var raw = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}") || {};
+          var normalized = {};
+          Object.keys(raw).forEach(function (name) {
+            var value = raw[name];
+            if (value && typeof value === "object" && value.summary) {
+              normalized[name] = value;
+            } else if (value) {
+              normalized[name] = { summary: String(value), tag: "" };
+            }
+          });
+          state.summaries = normalized;
+        } catch (ignore) {
+          state.summaries = {};
+        }
+      }
+
+      function saveCachedSummaries() {
+        try {
+          localStorage.setItem(CACHE_KEY, JSON.stringify(state.summaries));
+        } catch (ignore) {}
+      }
+
+      function escapeHtml(value) {
+        return String(value == null ? "" : value).replace(/[&<>"']/g, function (ch) {
+          return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch];
+        });
+      }
+
+      var escapeCss = typeof CSS !== "undefined" && CSS.escape
+        ? CSS.escape.bind(CSS)
+        : function (value) {
+            return String(value).replace(/"/g, '\\"');
+          };
+
+      function sinceDate(days) {
+        var d = new Date();
+        d.setUTCDate(d.getUTCDate() - days);
+        return d.toISOString().slice(0, 10);
+      }
+
+      function formatNumber(n) {
+        return numberFormat.format(n);
+      }
+
+      var tooltip = document.createElement("div");
+      tooltip.className = "tooltip";
+      tooltip.setAttribute("role", "tooltip");
+      document.body.appendChild(tooltip);
+
+      function showTooltip(anchor, text) {
+        tooltip.textContent = text;
+        tooltip.classList.add("visible");
+        var rect = anchor.getBoundingClientRect();
+        var left = rect.right + 12;
+        var top = rect.top;
+        if (left + tooltip.offsetWidth > window.innerWidth - 8) {
+          left = rect.left - tooltip.offsetWidth - 12;
+        }
+        if (left < 8) {
+          left = 8;
+        }
+        if (top + tooltip.offsetHeight > window.innerHeight - 8) {
+          top = Math.max(8, window.innerHeight - tooltip.offsetHeight - 8);
+        }
+        tooltip.style.left = left + "px";
+        tooltip.style.top = top + "px";
+      }
+
+      function hideTooltip() {
+        tooltip.classList.remove("visible");
+      }
+
+      window.addEventListener("scroll", hideTooltip, true);
+      window.addEventListener("resize", hideTooltip);
+
+      function skeletons(n) {
+        var html = "";
+        for (var i = 0; i < n; i++) {
+          html +=
+            '<div class="card skeleton" aria-hidden="true">' +
+              '<div class="head-skeleton">' +
+                '<div class="avatar-skeleton"></div>' +
+                '<div class="line w-70"></div>' +
+              "</div>" +
+              '<div class="line w-90"></div>' +
+              '<div class="line w-60"></div>' +
+              '<div class="line w-40"></div>' +
+            "</div>";
+        }
+        return html;
+      }
+
+      function emptyState(text) {
+        var el = document.createElement("div");
+        el.className = "empty";
+        el.innerHTML =
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+            '<circle cx="11" cy="11" r="8"></circle>' +
+            '<path d="m21 21-4.3-4.3"></path>' +
+          "</svg>";
+        var p = document.createElement("p");
+        p.textContent = text;
+        el.appendChild(p);
+        return el;
+      }
+
+      function repoCard(repo, compact) {
+        var lang = repo.language || "未标注";
+        var dotColor = LANGUAGE_COLORS[repo.language] || "#393e46";
+        var rawDescription = repo.description || "";
+        var translation = TRANSLATIONS[repo.full_name];
+        var cached = state.summaries[repo.full_name];
+        var description = (cached && cached.summary) || translation || rawDescription || "这个仓库还没有添加描述。";
+        var tag = (cached && cached.tag) || repoTag(repo);
+        var showOriginal = !compact && rawDescription && translation && rawDescription !== translation;
+        var created = new Date(repo.created_at).toLocaleDateString("zh-CN", {
+          year: "numeric",
+          month: "short",
+          day: "numeric"
+        });
+
+        var el = document.createElement("article");
+        el.className = "card" + (compact ? " compact" : "");
+        el.dataset.name = repo.full_name;
+        el.dataset.stars = repo.stargazers_count;
+        if (repo.language) {
+          el.dataset.lang = repo.language;
+        }
+        el.innerHTML =
+          '<div class="card-head">' +
+            '<img src="' + escapeHtml(repo.owner.avatar_url) + '" alt="" loading="lazy" onerror="this.style.visibility=\'hidden\'">' +
+            '<div class="title-box">' +
+              '<h2 class="repo-name"><a href="' + escapeHtml(repo.html_url) + '" target="_blank" rel="noopener noreferrer">' +
+                escapeHtml(repo.full_name) +
+              "</a></h2>" +
+              '<div class="owner">@' + escapeHtml(repo.owner.login) + "</div>" +
+            "</div>" +
+            '<a class="open" href="' + escapeHtml(repo.html_url) + '" target="_blank" rel="noopener noreferrer" aria-label="打开 ' + escapeHtml(repo.full_name) + '">' +
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                '<path d="M7 17 17 7"></path>' +
+                '<path d="M7 7h10v10"></path>' +
+              "</svg>" +
+            "</a>" +
+          "</div>" +
+          '<p class="desc">' + escapeHtml(description) + "</p>" +
+          (showOriginal ? '<p class="orig-desc">' + escapeHtml(rawDescription) + "</p>" : "") +
+          '<div class="card-foot">' +
+            '<span class="stars" title="Stars">' +
+              '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">' +
+                '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>' +
+              "</svg>" +
+              formatNumber(repo.stargazers_count) +
+            "</span>" +
+            '<span class="lang" title="主要语言">' +
+              '<span class="dot" style="background:' + dotColor + '"></span>' +
+              escapeHtml(lang) +
+            "</span>" +
+            '<span class="created" title="创建时间">' + escapeHtml(created) + "</span>" +
+            '<span class="tag" title="细分领域">' + escapeHtml(tag) + "</span>" +
+          "</div>";
+
+        el.addEventListener("mouseenter", function () {
+          var desc = el.querySelector(".desc");
+          if (!desc || desc.scrollHeight <= desc.clientHeight + 1) {
+            return;
+          }
+          showTooltip(desc, desc.textContent);
+        });
+        el.addEventListener("mouseleave", hideTooltip);
+
+        return el;
+      }
+
+      function applyExistingSummary(card, repo) {
+        var cached = state.summaries[repo.full_name];
+        if (!cached) {
+          return;
+        }
+        var desc = card.querySelector(".desc");
+        if (desc && cached.summary) {
+          desc.textContent = cached.summary;
+        }
+        var tag = card.querySelector(".tag");
+        if (tag && cached.tag) {
+          tag.textContent = cached.tag;
+        }
+      }
+
+      function updateDescriptions(name, text) {
+        document.querySelectorAll('[data-name="' + escapeCss(name) + '"] .desc').forEach(function (el) {
+          el.textContent = text;
+        });
+      }
+
+      function updateTags(name, tag) {
+        document.querySelectorAll('[data-name="' + escapeCss(name) + '"] .tag').forEach(function (el) {
+          el.textContent = tag;
+        });
+      }
+
+      function updateStats() {
+        var cards = grid.querySelectorAll(".card");
+        var stars = 0;
+        var langs = {};
+        cards.forEach(function (card) {
+          stars += Number(card.dataset.stars || 0);
+          if (card.dataset.lang) {
+            langs[card.dataset.lang] = true;
+          }
+        });
+        countEl.textContent = formatNumber(cards.length);
+        totalStarsEl.textContent = formatNumber(stars);
+        langCountEl.textContent = formatNumber(Object.keys(langs).length);
+      }
+
+      function showStatus(message) {
+        statusText.textContent = message;
+        status.hidden = false;
+      }
+
+      function hideStatus() {
+        status.hidden = true;
+      }
+
+      function updateTranslateStatus() {
+        var left = summaryQueue.length + activeSummaries;
+        if (state.model && left > 0) {
+          translateChip.hidden = false;
+          translateText.textContent = "AI 模型翻译中… 剩余 " + left;
+        } else {
+          translateChip.hidden = true;
+        }
+      }
+
+      function setLoading(on) {
+        refreshBtn.disabled = on;
+        refreshBtn.classList.toggle("spin", on);
+        loadMoreBtn.disabled = on;
+      }
+
+      function classifyRepo(repo) {
+        var haystack = (repo.full_name + " " + (repo.description || "")).toLowerCase();
+        for (var i = 0; i < CATEGORY_RULES.length; i++) {
+          if (CATEGORY_RULES[i].test.test(haystack)) {
+            return CATEGORY_RULES[i].name;
+          }
+        }
+        return "其他";
+      }
+
+      function repoTag(repo) {
+        var haystack = (repo.full_name + " " + (repo.description || "")).toLowerCase();
+        for (var i = 0; i < TAG_RULES.length; i++) {
+          if (TAG_RULES[i].test.test(haystack)) {
+            return TAG_RULES[i].tag;
+          }
+        }
+        return CATEGORY_TAGS[classifyRepo(repo)] || "实用工具";
+      }
+
+      function cleanTag(value) {
+        var tag = String(value || "").replace(/[\s|#*`"“”'"]/g, "").trim();
+        if (!tag) {
+          return "";
+        }
+        return tag.length > 5 ? tag.slice(0, 4) : tag;
+      }
+
+      function renderCategories() {
+        var groups = {};
+        state.repos.forEach(function (repo) {
+          var category = classifyRepo(repo);
+          (groups[category] = groups[category] || []).push(repo);
+        });
+
+        categoryList.innerHTML = "";
+        var names = Object.keys(groups).sort(function (a, b) {
+          return groups[b].length - groups[a].length;
+        });
+        categoryCount.textContent = names.length + " 个分类";
+        renderTypeBar(names, groups);
+
+        names.forEach(function (category) {
+          var repos = groups[category];
+          var block = document.createElement("section");
+          block.className = "category";
+          block.dataset.category = category;
+
+          var head = document.createElement("div");
+          head.className = "category-head";
+
+          var title = document.createElement("h3");
+          title.textContent = category;
+          head.appendChild(title);
+
+          var badge = document.createElement("span");
+          badge.className = "badge";
+          badge.textContent = repos.length + " 个项目";
+          head.appendChild(badge);
+
+          if (repos.length > 3) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "expand-btn";
+            button.dataset.category = category;
+            button.textContent = state.expanded[category] ? "收起" : "展开全部 " + repos.length + " 个";
+            head.appendChild(button);
+          }
+
+          var listEl = document.createElement("div");
+          listEl.className = "category-grid";
+          var visible = state.expanded[category] ? repos : repos.slice(0, 3);
+          visible.forEach(function (repo) {
+            var card = repoCard(repo, true);
+            applyExistingSummary(card, repo);
+            listEl.appendChild(card);
+          });
+
+          block.appendChild(head);
+          block.appendChild(listEl);
+          categoryList.appendChild(block);
+        });
+      }
+
+      function renderTypeBar(names, groups) {
+        typeBar.innerHTML = "";
+        names.forEach(function (category) {
+          var chip = document.createElement("button");
+          chip.type = "button";
+          chip.className = "type-chip";
+          chip.dataset.category = category;
+          var label = document.createElement("span");
+          label.textContent = category;
+          var count = document.createElement("strong");
+          count.textContent = groups[category].length;
+          chip.appendChild(label);
+          chip.appendChild(count);
+          typeBar.appendChild(chip);
+        });
+      }
+
+      typeBar.addEventListener("click", function (event) {
+        var chip = event.target.closest(".type-chip");
+        if (!chip) {
+          return;
+        }
+        var target = categoryList.querySelector('[data-category="' + escapeCss(chip.dataset.category) + '"]');
+        if (!target) {
+          return;
+        }
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        target.classList.remove("flash");
+        void target.offsetWidth;
+        target.classList.add("flash");
+        window.setTimeout(function () {
+          target.classList.remove("flash");
+        }, 1400);
+      });
+
+      categoryList.addEventListener("click", function (event) {
+        var button = event.target.closest(".expand-btn");
+        if (!button) {
+          return;
+        }
+        var category = button.dataset.category;
+        state.expanded[category] = !state.expanded[category];
+        renderCategories();
+      });
+
+      function cleanDocs(text, maxLen) {
+        var lines = String(text || "").replace(/<[^>]+>/g, " ").split(/\r?\n/);
+        var kept = [];
+        lines.forEach(function (line) {
+          var value = line
+            .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
+            .replace(/\[[^\]]*\]\([^)]*\)/g, " ")
+            .replace(/```[\s\S]*?```/g, " ")
+            .replace(/[*_>~#|`]/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+          if (!value) {
+            return;
+          }
+          var letters = value.replace(/[^A-Za-z0-9\u4e00-\u9fff]/g, "");
+          var hasEnding = /[。！？!?；;，,.:]$/.test(value);
+          if (letters.length < 4) {
+            return;
+          }
+          if (!hasEnding && value.length < 28) {
+            return;
+          }
+          if (/^(runs anywhere|uses anything|the easiest|the most |the best |next-?gen|empower|supercharge|unleash|unlock|ship faster|less code|build the future|powered by)/i.test(value)) {
+            return;
+          }
+          kept.push(value);
+        });
+        return kept.join(" ").replace(/\s+/g, " ").trim().slice(0, maxLen || 1500);
+      }
+
+      function isMostlyLatin(text) {
+        var letters = (text.match(/[A-Za-z]/g) || []).length;
+        var cjk = (text.match(/[\u4e00-\u9fff]/g) || []).length;
+        return letters > 20 && letters > cjk * 2;
+      }
+
+      function cleanModelOutput(text) {
+        var raw = String(text || "")
+          .replace(/```[\s\S]*?```/g, " ")
+          .replace(/<[^>]+>/g, " ")
+          .replace(/^#+\s*/gm, "")
+          .replace(/\*\*|__|`/g, "")
+          .replace(/[*_>~-]+/g, " ")
+          .trim();
+        var tag = "";
+        var tagMatch = raw.match(/标签\s*[:：]\s*([^\s。！？!?，,]{2,12})/);
+        if (tagMatch) {
+          tag = cleanTag(tagMatch[1]);
+          raw = raw.replace(/^标签\s*[:：]\s*[^\s。！？!?，,]{2,12}\s*[。]?\s*/, "").trim();
+        }
+        var lines = raw.split(/\n+/).map(function (line) {
+          return line.replace(/\s+/g, " ").trim();
+        }).filter(Boolean);
+        var body = lines.join(" ");
+        if (!tag) {
+          var marker = body.indexOf("该项目");
+          if (marker > 0 && marker <= 12) {
+            tag = cleanTag(body.slice(0, marker));
+            body = body.slice(marker);
+          } else if (lines.length > 1 && lines[0].length <= 8 && lines[0].indexOf("该项目") !== 0) {
+            tag = cleanTag(lines[0]);
+            body = lines.slice(1).join(" ");
+          }
+        }
+        body = body
+          .replace(/^(简介|总结|项目简介)\s*[:：]\s*/, "")
+          .replace(/\s+/g, " ")
+          .trim();
+        var sentences = body.match(/[^。！？!?]*[。！？!?]/g) || [];
+        if (sentences.length > 2) {
+          body = sentences.slice(0, 2).join("");
+        } else if (sentences.length === 0 && body.length > 120) {
+          body = body.slice(0, 120);
+        }
+        return { summary: translateGameNames(body), tag: translateGameNames(tag) };
+      }
+
+      async function fetchDocs(repo) {
+        var branches = ["HEAD", "main", "master"];
+        var files = ["README.md", "readme.md", "README.rst", "docs/README.md"];
+        for (var b = 0; b < branches.length; b++) {
+          for (var f = 0; f < files.length; f++) {
+            try {
+              var res = await fetch("https://raw.githubusercontent.com/" + repo.full_name + "/" + branches[b] + "/" + files[f]);
+              if (res.ok) {
+                return await res.text();
+              }
+            } catch (ignore) {}
+          }
+        }
+        try {
+          var apiRes = await fetch("https://api.github.com/repos/" + repo.full_name + "/readme", {
+            headers: { Accept: "application/vnd.github.raw+json" }
+          });
+          if (apiRes.ok) {
+            return await apiRes.text();
+          }
+        } catch (ignore) {}
+        return "";
+      }
+
+      async function generateSummary(repo) {
+        updateDescriptions(repo.full_name, "AI 模型生成中…");
+        var docs = await fetchDocs(repo);
+        var localBase = isLocalBase(modelConfig.base);
+        var readmeText = cleanDocs(docs, localBase ? 700 : 1500);
+        var descriptionText = cleanDocs(repo.description);
+        var fallbackSummary = translateGameNames(TRANSLATIONS[repo.full_name] || repo.description || "这个仓库还没有添加描述。");
+        var fallbackTag = repoTag(repo);
+        var userText = [
+          descriptionText ? "官方简介：" + descriptionText : "",
+          readmeText ? "项目文档：" + readmeText : ""
+        ].filter(Boolean).join("\n") || [
+          "项目名称：" + repo.full_name,
+          repo.language ? "主要语言：" + repo.language : ""
+        ].filter(Boolean).join("。");
+        try {
+          var summary = "";
+          var tag = "";
+          for (var attempt = 0; attempt < 2 && (summary === "" || summary.length < 12); attempt++) {
+            if (attempt > 0) {
+              await new Promise(function (resolve) {
+                setTimeout(resolve, 900);
+              });
+            }
+            var payload = {
+              model: state.model,
+              ollama_base: modelConfig.base,
+              api_key: modelConfig.apiKey,
+              messages: [
+                { role: "system", content: SUMMARY_SYSTEM },
+                { role: "user", content: userText }
+              ],
+              stream: false,
+              max_tokens: localBase ? 512 : 2000
+            };
+            if (localBase) {
+              if (attempt === 0) {
+                payload.reasoning_effort = "none";
+              }
+              payload.temperature = 0.1;
+            }
+            var options = {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(payload)
+            };
+            var res = null;
+            try {
+              res = await fetch(OLLAMA_BASE + "/chat/completions", options);
+            } catch (ignoreErr) {
+              res = null;
+            }
+            var direct = directModelBase();
+            if ((!res || !res.ok) && direct) {
+              try {
+                res = await fetch(direct + "/chat/completions", options);
+              } catch (ignoreErr) {
+                res = null;
+              }
+            }
+            if (!res || !res.ok) {
+              continue;
+            }
+            var data = await res.json();
+            var message = data.choices && data.choices[0] && data.choices[0].message;
+            var parsed = cleanModelOutput(message && message.content);
+            summary = parsed.summary;
+            tag = parsed.tag;
+          }
+          if (!summary || summary.length < 12) {
+            throw new Error("invalid summary");
+          }
+          summary = translateGameNames(summary);
+          tag = translateGameNames(tag) || fallbackTag;
+          if (isMostlyLatin(summary) && TRANSLATIONS[repo.full_name]) {
+            summary = translateGameNames(TRANSLATIONS[repo.full_name]);
+          }
+          state.summaries[repo.full_name] = { summary: summary, tag: tag };
+          saveCachedSummaries();
+          updateDescriptions(repo.full_name, summary);
+          updateTags(repo.full_name, tag);
+          summaryOkCount += 1;
+          if (summaryWarnShown && summaryFailCount > 0) {
+            statusText.textContent = "部分项目模型总结失败，已回退到内置中文简介（失败 " + summaryFailCount + " 个）。";
+          }
+        } catch (err) {
+          state.summaries[repo.full_name] = { summary: fallbackSummary, tag: fallbackTag };
+          updateDescriptions(repo.full_name, fallbackSummary);
+          updateTags(repo.full_name, fallbackTag);
+          summaryFailCount += 1;
+          if (!summaryWarnShown) {
+            summaryWarnShown = true;
+            var failMsg = summaryOkCount > 0
+              ? "部分项目模型总结失败，已回退到内置中文简介（失败 " + summaryFailCount + " 个）。"
+              : "模型总结失败，已回退到内置中文简介。请检查设置中的接口地址、模型名和 API Key。";
+            showStatus(failMsg);
+          }
+        }
+      }
+
+      function drainSummaries() {
+        if (!state.model) {
+          updateTranslateStatus();
+          return;
+        }
+        while (activeSummaries < 3 && summaryQueue.length > 0) {
+          var name = summaryQueue.shift();
+          var repo = state.repos.find(function (item) {
+            return item.full_name === name;
+          });
+          if (!repo) {
+            continue;
+          }
+          activeSummaries += 1;
+          generateSummary(repo).finally(function () {
+            activeSummaries -= 1;
+            drainSummaries();
+          });
+        }
+        updateTranslateStatus();
+      }
+
+      function scheduleSummaries(repos) {
+        repos.forEach(function (repo) {
+          if (!state.summaries[repo.full_name] && summaryQueue.indexOf(repo.full_name) === -1) {
+            summaryQueue.push(repo.full_name);
+          }
+        });
+        drainSummaries();
+      }
+
+      async function connectModel() {
+        try {
+          var direct = directModelBase();
+          var res = null;
+          try {
+            res = await fetch(
+              OLLAMA_BASE + "/models?base=" + encodeURIComponent(modelConfig.base),
+              {
+                headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
+              }
+            );
+          } catch (ignoreErr) {
+            res = null;
+          }
+          if ((!res || !res.ok) && direct) {
+            try {
+              res = await fetch(direct + "/models", {
+                headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
+              });
+            } catch (ignoreErr) {
+              res = null;
+            }
+          }
+          if (!res) {
+            throw new Error("无法连接模型接口");
+          }
+          var listUnavailable = false;
+          if (!res.ok) {
+            var errBody = "";
+            try {
+              errBody = await res.text();
+            } catch (ignoreErr) {}
+            var errDetail = errBody ? "：" + errBody : "";
+            if (res.status === 404 || res.status === 405 || res.status === 501) {
+              listUnavailable = true;
+            } else if (res.status === 401 || res.status === 403) {
+              throw new Error("HTTP " + res.status + errDetail + "（API Key 无效或权限不足）");
+            } else {
+              throw new Error("HTTP " + res.status + errDetail);
+            }
+          }
+          var models = [];
+          if (!listUnavailable) {
+            var data = await res.json();
+            models = data.data || data.models || [];
+          }
+          var configured = String(modelConfig.model || "").trim().toLowerCase();
+          var model = null;
+          if (configured) {
+            model = models.find(function (m) {
+              return String(m.id || m.name).toLowerCase() === configured;
+            }) || models.find(function (m) {
+              return String(m.id || m.name).toLowerCase().indexOf(configured) !== -1;
+            }) || null;
+          }
+          state.model = configured || (model && (model.id || model.name)) || "";
+          if (state.model) {
+            modelChip.hidden = false;
+            modelNameEl.textContent = state.model;
+            drainSummaries();
+          }
+          if (listUnavailable) {
+            if (!summaryWarnShown) {
+              hideStatus();
+            }
+            updateTranslateStatus();
+            refreshSettings(models, true);
+            return;
+          }
+          if (!model && models.length) {
+            showStatus("配置的模型不在列表中，将按名称直接请求：" + state.model);
+          } else {
+            if (!summaryWarnShown) {
+              hideStatus();
+            }
+          }
+          updateTranslateStatus();
+          if (!models.length) {
+            showStatus("模型列表为空，将按配置的模型名直接请求，请检查接口地址是否正确。");
+            refreshSettings(models, true);
+            return;
+          }
+          refreshSettings(models);
+        } catch (err) {
+          showStatus("无法连接模型接口：请确认本地代理或 Ollama 服务已启动，并检查设置中的接口地址、模型名和 API Key。");
+          updateTranslateStatus();
+          refreshSettings([]);
+        }
+      }
+
+      async function loadRepos(reset) {
+        if (state.loading) {
+          return;
+        }
+        state.loading = true;
+        setLoading(true);
+        hideStatus();
+
+        if (reset) {
+          state.page = 1;
+          state.repos = [];
+          grid.innerHTML = skeletons(6);
+          renderCategories();
+          summaryOkCount = 0;
+          summaryFailCount = 0;
+          summaryWarnShown = false;
+        }
+
+        var since = sinceDate(state.days);
+        var url =
+          "https://api.github.com/search/repositories" +
+          "?q=created:>" + since +
+          "&sort=stars&order=desc" +
+          "&per_page=" + state.perPage +
+          "&page=" + state.page;
+
+        try {
+          var res = await fetch(url, {
+            headers: { Accept: "application/vnd.github+json" }
+          });
+
+          if (!res.ok) {
+            var message = "请求失败（" + res.status + "）";
+            try {
+              var errBody = await res.json();
+              if (errBody && errBody.message) {
+                message = errBody.message;
+              }
+            } catch (ignore) {}
+            throw new Error(message);
+          }
+
+          var data = await res.json();
+          if (reset) {
+            grid.innerHTML = "";
+          }
+
+          var newRepos = [];
+          data.items.forEach(function (repo) {
+            state.repos.push(repo);
+            newRepos.push(repo);
+            grid.appendChild(repoCard(repo, false));
+          });
+          renderCategories();
+          scheduleSummaries(newRepos);
+
+          var shown = grid.querySelectorAll(".card").length;
+          loadMoreBtn.hidden = shown >= Math.min(data.total_count, 1000) || data.items.length < state.perPage;
+          state.page += 1;
+
+          if (reset && shown === 0) {
+            grid.appendChild(emptyState("近 " + state.days + " 天还没有新增高星项目，换个更长的周期试试。"));
+          }
+        } catch (err) {
+          if (reset) {
+            grid.innerHTML = "";
+            grid.appendChild(emptyState("暂时没有获取到项目，稍后重试。"));
+          }
+          showStatus(err.message || "无法连接 GitHub API，请检查网络后重试。");
+        } finally {
+          state.loading = false;
+          setLoading(false);
+          updateStats();
+        }
+      }
+
+      dayBtns.forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var days = Number(btn.dataset.days);
+          if (days === state.days) {
+            return;
+          }
+          dayBtns.forEach(function (b) {
+            b.classList.toggle("active", b === btn);
+          });
+          state.days = days;
+          setSubtitle("近 " + days + " 天创建 · 按 Stars 排序");
+          loadRepos(true);
+        });
+      });
+
+      refreshBtn.addEventListener("click", function () {
+        loadRepos(true);
+      });
+
+      loadMoreBtn.addEventListener("click", function () {
+        loadRepos(false);
+      });
+
+      var summaryEl = document.querySelector(".summary");
+      var pinnedOn = false;
+
+      function updateStickyState() {
+        var rect = summaryEl.getBoundingClientRect();
+        if (rect.top <= 11) {
+          pinnedOn = true;
+        } else if (rect.top > 24) {
+          pinnedOn = false;
+        }
+        document.body.classList.toggle("page-scrolled", pinnedOn);
+        if (pinnedOn) {
+          document.body.style.setProperty("--status-top", Math.round(rect.bottom + 14) + "px");
+        }
+      }
+
+      window.addEventListener("scroll", updateStickyState, { passive: true });
+      updateStickyState();
+
+      function isLocalBase(value) {
+        try {
+          var hostname = new URL(value).hostname;
+          return (
+            hostname === "localhost" ||
+            hostname === "127.0.0.1" ||
+            hostname === "::1" ||
+            /^127\./.test(hostname)
+          );
+        } catch (err) {
+          return false;
+        }
+      }
+
+      function refreshSettings(models, listUnavailable) {
+        settingsBase.value = modelConfig.base;
+        settingsModelName.value = modelConfig.model;
+        settingsApiKey.value = modelConfig.apiKey;
+        settingsModelList.innerHTML = "";
+        settingsMode.textContent = isLocalBase(modelConfig.base)
+          ? "本地 Ollama / 兼容接口"
+          : "远程 OpenAI 兼容 API";
+        if (listUnavailable) {
+          settingsState.textContent = "已连接";
+          settingsState.classList.remove("off");
+          settingsHint.textContent = "模型列表接口不可用，将直接使用配置的模型";
+          return;
+        }
+        if (!models || !models.length) {
+          settingsState.textContent = "未连接";
+          settingsState.classList.add("off");
+          settingsHint.textContent = "请确认地址正确且服务已启动";
+          return;
+        }
+        models.forEach(function (m) {
+          var option = document.createElement("option");
+          option.value = m.id || m.name;
+          settingsModelList.appendChild(option);
+        });
+        settingsState.textContent = "已连接";
+        settingsState.classList.remove("off");
+        settingsHint.textContent = "共 " + models.length + " 个模型可用";
+      }
+
+      function applySettingsFromForm() {
+        modelConfig.base = settingsBase.value.trim() || DEFAULT_MODEL_CONFIG.base;
+        modelConfig.model = settingsModelName.value.trim();
+        modelConfig.apiKey = settingsApiKey.value.trim();
+        saveModelConfig();
+        state.model = modelConfig.model;
+        if (state.model) {
+          modelChip.hidden = false;
+          modelNameEl.textContent = state.model;
+        } else {
+          modelChip.hidden = true;
+        }
+        summaryOkCount = 0;
+        summaryFailCount = 0;
+        summaryWarnShown = false;
+        hideStatus();
+        updateTranslateStatus();
+      }
+
+      settingsBtn.addEventListener("click", function (event) {
+        event.stopPropagation();
+        var open = settingsPanel.hidden;
+        settingsPanel.hidden = !open;
+        settingsBtn.setAttribute("aria-expanded", open ? "true" : "false");
+      });
+
+      document.addEventListener("click", function (event) {
+        if (!settingsPanel.hidden && !event.target.closest(".settings")) {
+          settingsPanel.hidden = true;
+          settingsBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && !settingsPanel.hidden) {
+          settingsPanel.hidden = true;
+          settingsBtn.setAttribute("aria-expanded", "false");
+        }
+      });
+
+      settingsSave.addEventListener("click", function () {
+        applySettingsFromForm();
+        settingsState.textContent = "检测中";
+        settingsState.classList.remove("off");
+        settingsHint.textContent = "已保存，正在检测连接…";
+        connectModel();
+      });
+
+      settingsRecheck.addEventListener("click", function () {
+        applySettingsFromForm();
+        settingsState.textContent = "检测中";
+        settingsState.classList.remove("off");
+        settingsHint.textContent = "正在检测连接…";
+        connectModel();
+      });
+
+      settingsModelName.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          settingsSave.click();
+        }
+      });
+
+      settingsBase.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          settingsSave.click();
+        }
+      });
+
+      settingsApiKey.addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+          settingsSave.click();
+        }
+      });
+
+      settingsPanel.addEventListener("click", function (event) {
+        event.stopPropagation();
+      });
+
+      function setSubtitle(text) {
+        if (subtitleTimer) {
+          clearTimeout(subtitleTimer);
+        }
+        subtitleEl.textContent = "";
+        var index = 0;
+        (function step() {
+          index += 1;
+          subtitleEl.textContent = text.slice(0, index);
+          if (index < text.length) {
+            subtitleTimer = window.setTimeout(step, 14);
+          }
+        })();
+      }
+
+      function typeChars(el, text, delay) {
+        el.innerHTML = "";
+        var fragment = document.createDocumentFragment();
+        String(text).split("").forEach(function (ch) {
+          var span = document.createElement("span");
+          span.className = "char";
+          span.textContent = ch;
+          fragment.appendChild(span);
+        });
+        var caret = document.createElement("span");
+        caret.className = "type-caret";
+        caret.setAttribute("aria-hidden", "true");
+        fragment.appendChild(caret);
+        el.appendChild(fragment);
+        var chars = el.querySelectorAll(".char");
+        var index = 0;
+        (function step() {
+          if (index < chars.length) {
+            chars[index].classList.add("is-typed");
+            index += 1;
+            window.setTimeout(step, delay);
+          } else {
+            el.classList.add("is-done");
+          }
+        })();
+      }
+
+      function initHeroErase() {
+        var hero = document.getElementById("hero");
+        var canvas = document.getElementById("heroMask");
+        if (!hero || !canvas) {
+          return;
+        }
+        if (!window.matchMedia || !window.matchMedia("(hover: hover)").matches) {
+          return;
+        }
+        var ctx = canvas.getContext("2d");
+        if (!ctx) {
+          return;
+        }
+
+        var MASK = "232, 234, 236";
+        var R_START = 8;
+        var R_END = 128;
+        var R_VARY = 0.45;
+        var LIFETIME = 520;
+        var STAMP_STEP = 12;
+        var MAX_STAMPS = 160;
+        var DPR = Math.min(window.devicePixelRatio || 1, 2);
+        var w = 0;
+        var h = 0;
+
+        function resize() {
+          var rect = hero.getBoundingClientRect();
+          w = rect.width;
+          h = rect.height;
+          canvas.width = Math.round(w * DPR);
+          canvas.height = Math.round(h * DPR);
+          canvas.style.width = w + "px";
+          canvas.style.height = h + "px";
+          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+          ctx.globalCompositeOperation = "source-over";
+          ctx.fillStyle = "rgb(" + MASK + ")";
+          ctx.fillRect(0, 0, w, h);
+        }
+
+        resize();
+        window.addEventListener("resize", resize);
+
+        var stamps = [];
+        var lastX = null;
+        var lastY = null;
+
+        function addStamp(x, y) {
+          if (stamps.length >= MAX_STAMPS) {
+            stamps.shift();
+          }
+          stamps.push({
+            x: x,
+            y: y,
+            born: performance.now(),
+            seed: Math.random() * Math.PI * 2,
+            rmax: R_END * (1 - R_VARY + Math.random() * R_VARY)
+          });
+        }
+
+        function stampAlong(x, y) {
+          if (lastX === null) {
+            addStamp(x, y);
+          } else {
+            var dx = x - lastX;
+            var dy = y - lastY;
+            var dist = Math.hypot(dx, dy);
+            var steps = Math.max(1, Math.ceil(dist / STAMP_STEP));
+            for (var i = 1; i <= steps; i++) {
+              addStamp(lastX + (dx * i) / steps, lastY + (dy * i) / steps);
+            }
+          }
+          lastX = x;
+          lastY = y;
+        }
+
+        function carveInk(x, y, r, alpha, seed) {
+          var g = ctx.createRadialGradient(x, y, r * 0.25, x, y, r);
+          g.addColorStop(0, "rgba(0, 0, 0, " + 0.95 * alpha + ")");
+          g.addColorStop(0.55, "rgba(0, 0, 0, " + 0.88 * alpha + ")");
+          g.addColorStop(1, "rgba(0, 0, 0, 0)");
+          ctx.fillStyle = g;
+          ctx.beginPath();
+          var segs = 32;
+          for (var i = 0; i <= segs; i++) {
+            var a = (i / segs) * Math.PI * 2;
+            var wob = 0.78 +
+              0.14 * Math.sin(a * 3 + seed) +
+              0.08 * Math.sin(a * 7 + seed * 2.1) +
+              0.05 * Math.sin(a * 13 + seed * 0.7);
+            var rr = r * wob;
+            var px = x + Math.cos(a) * rr;
+            var py = y + Math.sin(a) * rr;
+            if (i === 0) {
+              ctx.moveTo(px, py);
+            } else {
+              ctx.lineTo(px, py);
+            }
+          }
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        var running = false;
+        function loop() {
+          var now = performance.now();
+          ctx.globalCompositeOperation = "source-over";
+          ctx.fillStyle = "rgb(" + MASK + ")";
+          ctx.fillRect(0, 0, w, h);
+          ctx.globalCompositeOperation = "destination-out";
+          for (var i = stamps.length - 1; i >= 0; i--) {
+            var t = (now - stamps[i].born) / LIFETIME;
+            if (t >= 1) {
+              stamps.splice(i, 1);
+              continue;
+            }
+            var ease = 1 - Math.pow(1 - t, 3);
+            var r = R_START + (stamps[i].rmax - R_START) * ease;
+            var alpha = 1 - t * t;
+            carveInk(stamps[i].x, stamps[i].y, r, alpha, stamps[i].seed);
+          }
+          if (stamps.length) {
+            requestAnimationFrame(loop);
+          } else {
+            running = false;
+          }
+        }
+
+        function start() {
+          if (!running) {
+            running = true;
+            requestAnimationFrame(loop);
+          }
+        }
+
+        hero.addEventListener("mouseenter", function (e) {
+          var rect = hero.getBoundingClientRect();
+          lastX = e.clientX - rect.left;
+          lastY = e.clientY - rect.top;
+          stampAlong(lastX, lastY);
+          start();
+        });
+
+        hero.addEventListener("mousemove", function (e) {
+          var rect = hero.getBoundingClientRect();
+          stampAlong(e.clientX - rect.left, e.clientY - rect.top);
+          start();
+        });
+
+        hero.addEventListener("mouseleave", function () {
+          lastX = null;
+          lastY = null;
+        });
+      }
+
+      loadCachedSummaries();
+      connectModel();
+      initHeroErase();
+      typeChars(
+        document.getElementById("heroSubtitle"),
+        document.getElementById("heroSubtitle").textContent.trim(),
+        18
+      );
+      loadRepos(true);
+    })();
+  </script>
+</body>
+</html>
