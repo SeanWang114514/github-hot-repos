@@ -2950,7 +2950,12 @@
           }
           refreshSettings(models);
         } catch (err) {
-          showStatus("无法连接模型接口：请确认本地代理或 Ollama 服务已启动，并检查设置中的接口地址、模型名和 API Key。");
+          var connectErr = err && err.message ? String(err.message) : "";
+          if (connectErr.indexOf("HTTP ") === 0) {
+            showStatus(connectErr);
+          } else {
+            showStatus("无法连接模型接口：请确认地址正确且服务已启动，并检查设置中的接口地址、模型名和 API Key。");
+          }
           updateTranslateStatus();
           refreshSettings([]);
         }
