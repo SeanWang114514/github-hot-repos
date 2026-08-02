@@ -2067,7 +2067,7 @@
       }
 
       var CACHE_KEY = "gh_ollama_summaries_v7";
-      var SUMMARY_SYSTEM = "你是一名中文科技编辑。给你一个开源项目的资料，请输出两行内容：第一行写标签，用 4 到 5 个汉字概括该项目最细分的领域，例如「语音交互」「3D 渲染」「数据可视化」；第二行用简体中文写一句 30 到 80 字的项目简介，必须以“该项目”开头。请以“官方简介”为主要依据概括项目的真实功能与用途，不要使用宣传标语、口号、首页标题或“runs anywhere. uses anything.”这类装饰性短语；若没有官方简介，再从项目文档中提取有信息量的描述。游戏、模组等专有名称请使用常见中文译名（如 Pokemon 译为宝可梦、Zelda 译为塞尔达、Minecraft 译为我的世界）。不要提到资料格式；不要输出英文；不要用标题、列表或加粗；只输出这两行。";
+      var SUMMARY_SYSTEM = "你是中文编辑。根据资料输出两行，不输出其他内容：第一行用 4-5 个汉字写细分领域标签；第二行用简体中文写 30-60 字简介，以“该项目”开头，忠实概括真实功能。专有名称用常见中文译名；禁止宣传语、英文、标题、列表。";
 
       var state = {
         days: 7,
@@ -2699,7 +2699,7 @@
         updateDescriptions(repo.full_name, "AI 模型生成中…");
         var docs = await fetchDocs(repo);
         var localBase = isLocalBase(modelConfig.base);
-        var readmeText = cleanDocs(docs, localBase ? 700 : 1500);
+        var readmeText = cleanDocs(docs, 700);
         var descriptionText = cleanDocs(repo.description);
         var fallbackSummary = translateGameNames(TRANSLATIONS[repo.full_name] || repo.description || "这个仓库还没有添加描述。");
         var fallbackTag = repoTag(repo);
@@ -2716,7 +2716,7 @@
           for (var attempt = 0; attempt < 2 && (summary === "" || summary.length < 12); attempt++) {
             if (attempt > 0) {
               await new Promise(function (resolve) {
-                setTimeout(resolve, 900);
+                setTimeout(resolve, 300);
               });
             }
             var payload = {
@@ -2728,7 +2728,7 @@
                 { role: "user", content: userText }
               ],
               stream: false,
-              max_tokens: localBase ? 512 : 2000
+              max_tokens: localBase ? 512 : 800
             };
             if (localBase) {
               if (attempt === 0) {
