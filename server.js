@@ -20,6 +20,7 @@ function addCors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-API-Key");
+  res.setHeader("Access-Control-Allow-Private-Network", "true");
 }
 
 function writeJson(res, status, data) {

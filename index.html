@@ -2015,10 +2015,14 @@
       var summaryOkCount = 0;
       var summaryFailCount = 0;
       var summaryWarnShown = false;
+      var remoteLimit = 6;
+      var rateLimitWarned = false;
 
       var OLLAMA_BASE = window.location.protocol === "file:"
         ? "http://127.0.0.1:5173/v1"
         : window.location.origin + "/v1";
+      var siteIsLocal = window.location.protocol === "file:" ||
+        ["localhost", "127.0.0.1", "::1"].indexOf(window.location.hostname) !== -1;
 
       function directModelBase() {
         var base = String(modelConfig.base || "").trim().replace(/\/+$/, "");
@@ -2034,6 +2038,21 @@
           return "";
         }
         return base.indexOf("/v1") === -1 ? base + "/v1" : base;
+      }
+
+      function fetchWithTimeout(url, options, ms) {
+        var init = options || {};
+        if (typeof AbortController !== "undefined") {
+          var controller = new AbortController();
+          init.signal = controller.signal;
+          var timer = setTimeout(function () {
+            controller.abort();
+          }, ms || 120000);
+          return fetch(url, init).finally(function () {
+            clearTimeout(timer);
+          });
+        }
+        return fetch(url, init);
       }
 
       var DEFAULT_MODEL_CONFIG = {
@@ -2066,7 +2085,7 @@
         } catch (err) {}
       }
 
-      var CACHE_KEY = "gh_ollama_summaries_v7";
+      var CACHE_KEY = "gh_ollama_summaries_v8";
       var SUMMARY_SYSTEM = "你是中文编辑。根据资料输出两行，不输出其他内容：第一行用 4-5 个汉字写细分领域标签；第二行用简体中文写 30-60 字简介，以“该项目”开头，忠实概括真实功能。专有名称用常见中文译名；禁止宣传语、英文、标题、列表。";
 
       var state = {
@@ -2630,6 +2649,18 @@
         return letters > 20 && letters > cjk * 2;
       }
 
+      function isGoodChineseSummary(text) {
+        var value = String(text || "").trim();
+        if (value.length < 12) {
+          return false;
+        }
+        if (value.indexOf("这个仓库还没有添加描述") !== -1) {
+          return false;
+        }
+        var cjk = (value.match(/[\u4e00-\u9fff]/g) || []).length;
+        return cjk >= 8 && !isMostlyLatin(value);
+      }
+
       function cleanModelOutput(text) {
         var raw = String(text || "")
           .replace(/```[\s\S]*?```/g, " ")
@@ -2673,21 +2704,23 @@
 
       async function fetchDocs(repo) {
         var branches = ["HEAD", "main", "master"];
-        var files = ["README.md", "readme.md", "README.rst", "docs/README.md"];
-        for (var b = 0; b < branches.length; b++) {
-          for (var f = 0; f < files.length; f++) {
-            try {
-              var res = await fetch("https://raw.githubusercontent.com/" + repo.full_name + "/" + branches[b] + "/" + files[f]);
-              if (res.ok) {
-                return await res.text();
-              }
-            } catch (ignore) {}
-          }
-        }
+        var urls = branches.map(function (b) {
+          return "https://raw.githubusercontent.com/" + repo.full_name + "/" + b + "/README.md";
+        });
         try {
-          var apiRes = await fetch("https://api.github.com/repos/" + repo.full_name + "/readme", {
+          return await Promise.any(urls.map(function (u) {
+            return fetchWithTimeout(u, {}, 6000).then(function (r) {
+              if (!r.ok) {
+                throw new Error("not found");
+              }
+              return r.text();
+            });
+          }));
+        } catch (ignore) {}
+        try {
+          var apiRes = await fetchWithTimeout("https://api.github.com/repos/" + repo.full_name + "/readme", {
             headers: { Accept: "application/vnd.github.raw+json" }
-          });
+          }, 8000);
           if (apiRes.ok) {
             return await apiRes.text();
           }
@@ -2713,10 +2746,12 @@
         try {
           var summary = "";
           var tag = "";
-          for (var attempt = 0; attempt < 2 && (summary === "" || summary.length < 12); attempt++) {
+          var lastErr = "";
+          var rateLimited = false;
+          for (var attempt = 0; attempt < 3 && (summary === "" || summary.length < 8 || isMostlyLatin(summary)); attempt++) {
             if (attempt > 0) {
               await new Promise(function (resolve) {
-                setTimeout(resolve, 300);
+                setTimeout(resolve, 400 + attempt * 300 + (rateLimited ? 2000 : 0));
               });
             }
             var payload = {
@@ -2728,10 +2763,10 @@
                 { role: "user", content: userText }
               ],
               stream: false,
-              max_tokens: localBase ? 512 : 800
+              max_tokens: localBase ? 512 : 1200
             };
+            payload.reasoning_effort = "none";
             if (localBase) {
-              payload.reasoning_effort = "none";
               payload.temperature = 0.1;
             }
             var options = {
@@ -2741,17 +2776,21 @@
             };
             var res = null;
             if (localBase) {
-              try {
-                res = await fetch(OLLAMA_BASE + "/chat/completions", options);
-              } catch (ignoreErr) {
-                res = null;
+              if (siteIsLocal) {
+                try {
+                  res = await fetchWithTimeout(OLLAMA_BASE + "/chat/completions", options, 120000);
+                } catch (ignoreErr) {
+                  res = null;
+                  lastErr = ignoreErr && ignoreErr.name === "AbortError" ? "请求超时" : String((ignoreErr && ignoreErr.message) || ignoreErr || "请求失败");
+                }
               }
               var direct = directModelBase();
               if ((!res || !res.ok) && direct) {
                 try {
-                  res = await fetch(direct + "/chat/completions", options);
+                  res = await fetchWithTimeout(direct + "/chat/completions", options, 120000);
                 } catch (ignoreErr) {
                   res = null;
+                  lastErr = ignoreErr && ignoreErr.name === "AbortError" ? "请求超时" : String((ignoreErr && ignoreErr.message) || ignoreErr || "请求失败");
                 }
               }
             }
@@ -2769,17 +2808,45 @@
                   }
                 });
                 try {
-                  res = await fetch(remote + "/chat/completions", {
+                  res = await fetchWithTimeout(remote + "/chat/completions", {
                     method: "POST",
                     headers: remoteHeaders,
                     body: JSON.stringify(remotePayload)
-                  });
+                  }, 120000);
                 } catch (ignoreErr) {
                   res = null;
+                  lastErr = ignoreErr && ignoreErr.name === "AbortError" ? "请求超时" : String((ignoreErr && ignoreErr.message) || ignoreErr || "请求失败");
                 }
               }
             }
             if (!res || !res.ok) {
+              if (res && !res.ok) {
+                var errBody = "";
+                try {
+                  errBody = await res.text();
+                } catch (ignoreErr) {}
+                var errMsg = errBody || "";
+                try {
+                  var errJson = JSON.parse(errBody);
+                  if (errJson && errJson.error && errJson.error.message) {
+                    errMsg = errJson.error.message;
+                  }
+                } catch (ignoreErr) {}
+                lastErr = "HTTP " + res.status + (errMsg ? "：" + errMsg : "");
+                if (lastErr.length > 160) {
+                  lastErr = lastErr.slice(0, 160);
+                }
+                if (!localBase && (res.status === 429 || res.status >= 500)) {
+                  rateLimited = true;
+                  if (remoteLimit > 1) {
+                    remoteLimit = Math.max(1, Math.floor(remoteLimit / 2));
+                    if (!rateLimitWarned) {
+                      rateLimitWarned = true;
+                      showStatus("检测到 API 限流，已自动降低并发，避免 429 重试。");
+                    }
+                  }
+                }
+              }
               continue;
             }
             var data = await res.json();
@@ -2788,8 +2855,8 @@
             summary = parsed.summary;
             tag = parsed.tag;
           }
-          if (!summary || summary.length < 12) {
-            throw new Error("invalid summary");
+          if (!summary || summary.length < 8) {
+            throw new Error("invalid summary" + (lastErr ? "：" + lastErr : ""));
           }
           summary = translateGameNames(summary);
           tag = translateGameNames(tag) || fallbackTag;
@@ -2806,14 +2873,22 @@
           }
         } catch (err) {
           state.summaries[repo.full_name] = { summary: fallbackSummary, tag: fallbackTag };
+          if (isGoodChineseSummary(fallbackSummary)) {
+            saveCachedSummaries();
+          } else {
+            delete state.summaries[repo.full_name];
+          }
           updateDescriptions(repo.full_name, fallbackSummary);
           updateTags(repo.full_name, fallbackTag);
           summaryFailCount += 1;
           if (!summaryWarnShown) {
             summaryWarnShown = true;
+            var failReason = err && err.message && String(err.message).indexOf("invalid summary") === 0
+              ? String(err.message).replace(/^invalid summary[:：]?/, "")
+              : "";
             var failMsg = summaryOkCount > 0
               ? "部分项目模型总结失败，已回退到内置中文简介（失败 " + summaryFailCount + " 个）。"
-              : "模型总结失败，已回退到内置中文简介。请检查设置中的接口地址、模型名和 API Key。";
+              : "模型总结失败，已回退到内置中文简介。请检查设置中的接口地址、模型名和 API Key。" + (failReason ? "（" + failReason + "）" : "");
             showStatus(failMsg);
           }
         }
@@ -2824,7 +2899,8 @@
           updateTranslateStatus();
           return;
         }
-        while (activeSummaries < 3 && summaryQueue.length > 0) {
+        var limit = isLocalBase(modelConfig.base) ? 3 : remoteLimit;
+        while (activeSummaries < limit && summaryQueue.length > 0) {
           var name = summaryQueue.shift();
           var repo = state.repos.find(function (item) {
             return item.full_name === name;
@@ -2843,7 +2919,20 @@
 
       function scheduleSummaries(repos) {
         repos.forEach(function (repo) {
-          if (!state.summaries[repo.full_name] && summaryQueue.indexOf(repo.full_name) === -1) {
+          var cached = state.summaries[repo.full_name];
+          if (cached && isGoodChineseSummary(cached.summary)) {
+            return;
+          }
+          delete state.summaries[repo.full_name];
+          var builtin = translateGameNames(TRANSLATIONS[repo.full_name] || repo.description || "");
+          if (isGoodChineseSummary(builtin)) {
+            state.summaries[repo.full_name] = { summary: builtin, tag: repoTag(repo) };
+            saveCachedSummaries();
+            updateDescriptions(repo.full_name, builtin);
+            updateTags(repo.full_name, repoTag(repo));
+            return;
+          }
+          if (summaryQueue.indexOf(repo.full_name) === -1) {
             summaryQueue.push(repo.full_name);
           }
         });
@@ -2855,22 +2944,23 @@
           var localBase = isLocalBase(modelConfig.base);
           var direct = directModelBase();
           var res = null;
-          if (localBase) {
+          if (localBase && siteIsLocal) {
             try {
-              res = await fetch(
+              res = await fetchWithTimeout(
                 OLLAMA_BASE + "/models?base=" + encodeURIComponent(modelConfig.base),
                 {
                   headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
-                }
+                },
+                15000
               );
             } catch (ignoreErr) {
               res = null;
             }
             if ((!res || !res.ok) && direct) {
               try {
-                res = await fetch(direct + "/models", {
+                res = await fetchWithTimeout(direct + "/models", {
                   headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
-                });
+                }, 15000);
               } catch (ignoreErr) {
                 res = null;
               }
@@ -2881,7 +2971,7 @@
             if (remote) {
               var remoteHeaders = modelConfig.apiKey ? { Authorization: "Bearer " + modelConfig.apiKey } : {};
               try {
-                res = await fetch(remote + "/models", { headers: remoteHeaders });
+                res = await fetchWithTimeout(remote + "/models", { headers: remoteHeaders }, 15000);
               } catch (ignoreErr) {
                 res = null;
               }
@@ -2912,14 +3002,21 @@
           }
           var configured = String(modelConfig.model || "").trim().toLowerCase();
           var model = null;
+          var picked = null;
           if (configured) {
             model = models.find(function (m) {
               return String(m.id || m.name).toLowerCase() === configured;
             }) || models.find(function (m) {
               return String(m.id || m.name).toLowerCase().indexOf(configured) !== -1;
             }) || null;
+            if (!model && models.length) {
+              picked = models[0];
+            }
           }
-          state.model = configured || (model && (model.id || model.name)) || "";
+          state.model = (model && (model.id || model.name)) || (picked && (picked.id || picked.name)) || configured || "";
+          if (picked) {
+            showStatus("配置的模型不在列表中，已自动改用：" + state.model);
+          }
           if (state.model) {
             modelChip.hidden = false;
             modelNameEl.textContent = state.model;
