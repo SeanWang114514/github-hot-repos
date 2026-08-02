@@ -2944,17 +2944,19 @@
           var localBase = isLocalBase(modelConfig.base);
           var direct = directModelBase();
           var res = null;
-          if (localBase && siteIsLocal) {
-            try {
-              res = await fetchWithTimeout(
-                OLLAMA_BASE + "/models?base=" + encodeURIComponent(modelConfig.base),
-                {
-                  headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
-                },
-                15000
-              );
-            } catch (ignoreErr) {
-              res = null;
+          if (localBase) {
+            if (siteIsLocal) {
+              try {
+                res = await fetchWithTimeout(
+                  OLLAMA_BASE + "/models?base=" + encodeURIComponent(modelConfig.base),
+                  {
+                    headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
+                  },
+                  15000
+                );
+              } catch (ignoreErr) {
+                res = null;
+              }
             }
             if ((!res || !res.ok) && direct) {
               try {
@@ -3205,7 +3207,9 @@
         if (!models || !models.length) {
           settingsState.textContent = "未连接";
           settingsState.classList.add("off");
-          settingsHint.textContent = "请确认地址正确且服务已启动";
+          settingsHint.textContent = isLocalBase(modelConfig.base) && !siteIsLocal
+            ? "托管页访问本地模型需设置 OLLAMA_ORIGINS 并关闭 Chrome 私有网络限制"
+            : "请确认地址正确且服务已启动";
           return;
         }
         models.forEach(function (m) {
