@@ -2028,6 +2028,14 @@
         return base.indexOf("/v1") === -1 ? base + "/v1" : base;
       }
 
+      function remoteModelBase() {
+        var base = String(modelConfig.base || "").trim().replace(/\/+$/, "");
+        if (!base || isLocalBase(base)) {
+          return "";
+        }
+        return base.indexOf("/v1") === -1 ? base + "/v1" : base;
+      }
+
       var DEFAULT_MODEL_CONFIG = {
         base: "http://localhost:11434/v1/",
         model: "qwen3:1.7b",
@@ -2734,17 +2742,43 @@
               body: JSON.stringify(payload)
             };
             var res = null;
-            try {
-              res = await fetch(OLLAMA_BASE + "/chat/completions", options);
-            } catch (ignoreErr) {
-              res = null;
-            }
-            var direct = directModelBase();
-            if ((!res || !res.ok) && direct) {
+            if (localBase) {
               try {
-                res = await fetch(direct + "/chat/completions", options);
+                res = await fetch(OLLAMA_BASE + "/chat/completions", options);
               } catch (ignoreErr) {
                 res = null;
+              }
+              var direct = directModelBase();
+              if ((!res || !res.ok) && direct) {
+                try {
+                  res = await fetch(direct + "/chat/completions", options);
+                } catch (ignoreErr) {
+                  res = null;
+                }
+              }
+            }
+            if (!res || !res.ok) {
+              var remote = remoteModelBase();
+              if (remote) {
+                var remoteHeaders = { "Content-Type": "application/json" };
+                if (modelConfig.apiKey) {
+                  remoteHeaders.Authorization = "Bearer " + modelConfig.apiKey;
+                }
+                var remotePayload = {};
+                Object.keys(payload).forEach(function (key) {
+                  if (key !== "ollama_base" && key !== "api_key") {
+                    remotePayload[key] = payload[key];
+                  }
+                });
+                try {
+                  res = await fetch(remote + "/chat/completions", {
+                    method: "POST",
+                    headers: remoteHeaders,
+                    body: JSON.stringify(remotePayload)
+                  });
+                } catch (ignoreErr) {
+                  res = null;
+                }
               }
             }
             if (!res || !res.ok) {
@@ -2820,25 +2854,39 @@
 
       async function connectModel() {
         try {
+          var localBase = isLocalBase(modelConfig.base);
           var direct = directModelBase();
           var res = null;
-          try {
-            res = await fetch(
-              OLLAMA_BASE + "/models?base=" + encodeURIComponent(modelConfig.base),
-              {
-                headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
-              }
-            );
-          } catch (ignoreErr) {
-            res = null;
-          }
-          if ((!res || !res.ok) && direct) {
+          if (localBase) {
             try {
-              res = await fetch(direct + "/models", {
-                headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
-              });
+              res = await fetch(
+                OLLAMA_BASE + "/models?base=" + encodeURIComponent(modelConfig.base),
+                {
+                  headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
+                }
+              );
             } catch (ignoreErr) {
               res = null;
+            }
+            if ((!res || !res.ok) && direct) {
+              try {
+                res = await fetch(direct + "/models", {
+                  headers: modelConfig.apiKey ? { "X-API-Key": modelConfig.apiKey } : {}
+                });
+              } catch (ignoreErr) {
+                res = null;
+              }
+            }
+          }
+          if (!res || !res.ok) {
+            var remote = remoteModelBase();
+            if (remote) {
+              var remoteHeaders = modelConfig.apiKey ? { Authorization: "Bearer " + modelConfig.apiKey } : {};
+              try {
+                res = await fetch(remote + "/models", { headers: remoteHeaders });
+              } catch (ignoreErr) {
+                res = null;
+              }
             }
           }
           if (!res) {
