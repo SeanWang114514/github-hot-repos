@@ -2731,9 +2731,7 @@
               max_tokens: localBase ? 512 : 800
             };
             if (localBase) {
-              if (attempt === 0) {
-                payload.reasoning_effort = "none";
-              }
+              payload.reasoning_effort = "none";
               payload.temperature = 0.1;
             }
             var options = {
